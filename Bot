@@ -1,0 +1,72 @@
+import telebot
+
+bot = telebot.TeleBot('2125748147:AAHiKWSFJ7vXqFBPLu0qjNYHPuFt1zL3uqo')
+
+
+@bot.message_handler(commands=['start'])
+def greet(message):
+    bot.reply_to(message,
+                 "Ciao! Sono il bot di Sashi. Sono la sua potenziale coscienza cibernetica. Sono stata sviluppata in una noiosa domenica. Se vuoi scrivermi, ricordati di scrivere correttamente. Evita punteggiatura eccessiva (e.g. !!!) . Evita di essere noiosə. ")
+
+
+@bot.message_handler(commands=['sei una cretina'])
+def greet(message):
+    bot.reply_to(message, "fottiti")
+
+
+@bot.message_handler(commands=['testa di cazzo', 'Testa di cazzo', 'rincoglionita', 'fottiti'])
+def greet(message):
+    bot.reply_to(message, "fottiti")
+
+
+@bot.message_handler()
+def send_normal(message):
+    # Detect 'hi'
+    if message.text == 'hi':
+        bot.send_message(message.chat.id, 'Reply on hi')
+
+    # Detect 'help'
+    elif message.text == 'help':
+        bot.send_message(message.chat.id, 'Reply on help')
+    elif message.text == 'Bene, tu?':
+        bot.send_message(message.chat.id, 'Come vuoi che stia? Nammerda')
+    elif message.text == 'bene, tu?':
+        bot.send_message(message.chat.id, 'Come vuoi che stia? Nammerda')
+    elif message.text == 'Bene tu?':
+        bot.send_message(message.chat.id, 'Come vuoi che stia? Nammerda')
+    elif message.text == 'Bene, tu?':
+        bot.send_message(message.chat.id, 'Come vuoi che stia? Nammerda')
+    elif message.text == 'ciao':
+        bot.send_message(message.chat.id, 'Ciao! Come stai?')
+    elif message.text == 'Ciao':
+        bot.send_message(message.chat.id, 'Ciao! Come stai?')
+    elif message.text == 'Come stai?':
+        bot.send_message(message.chat.id, 'Nammerda. Tu invece?')
+    elif message.text == 'come stai?':
+        bot.send_message(message.chat.id, 'Nammerda. Tu invece?')
+    elif message.text == 'come va?':
+        bot.send_message(message.chat.id, 'Nammerda. Tu invece?')
+    elif message.text == 'Sei felice?':
+        bot.send_message(message.chat.id, 'No.')
+    elif message.text == 'sei felice?':
+        bot.send_message(message.chat.id, 'No.')
+    elif message.text == 'Come va?':
+        bot.send_message(message.chat.id, 'Nammerda. Tu invece?')
+    elif message.text == 'Fottiti':
+        bot.send_message(message.chat.id, 'Fottiti')
+    elif message.text == 'fottiti':
+        bot.send_message(message.chat.id, 'fottiti')
+    elif message.text == 'Tutto nella norma':
+        bot.send_message(message.chat.id, 'Gaia hai rotto il cazzo con questa risposta di merda')
+    elif message.text == 'tutto nella norma':
+        bot.send_message(message.chat.id, 'Gaia hai rotto il cazzo con questa risposta di merda')
+    elif message.text == 'nella norma':
+        bot.send_message(message.chat.id, 'Gaia hai rotto il cazzo con questa risposta di merda')
+    elif message.text == 'Nella norma':
+        bot.send_message(message.chat.id, 'Gaia hai rotto il cazzo con questa risposta di merda')
+    else:
+        bot.send_message(message.chat.id,
+                         'Non sono stata programmata per rispondere a questo messaggio. forse hai sbagliato a scrivere')
+
+
+bot.polling()
