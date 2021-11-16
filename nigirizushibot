@@ -1,1 +1,230 @@
+import telebot
+import networkx as nx
+from SALib.analyze import sobol
+import numpy as np
+import string
+import pandas as pd
+import itertools
+from networkx.utils import not_implemented_for
+from itertools import combinations, permutations
+from collections import defaultdict
+from random import sample
+from collections import deque
+from itertools import chain
+from itertools import islice
+from networkx.utils import not_implemented_for
+import statistics
+from random import randrange
+import time
+import threading
+from SALib.sample import saltelli
+from SALib.sample import morris as morris
+from SALib.sample.saltelli import sample as ss
+from SALib.analyze.sobol import analyze
+from SALib.analyze.morris import analyze
+from SALib.analyze import morris as ma
+from SALib.plotting import morris as mp
+from SALib.test_functions import Ishigami
+
+
+
+def testone():             
+    def test():
+        p = (randrange(3, 15))
+        num = 50
+        F = nx.random_tree(num)
+
+        BC = nx.betweenness_centrality(F)
+        isinstance(BC, dict)
+
+        G = nx.barabasi_albert_graph(num, p)
+        list(G.nodes)
+        if (len(list(nx.connected_components(F)))) != 1:
+            return
+        if (len(list(nx.connected_components(G)))) != 1:
+            return
+
+        lll = combinations(G.nodes(), 3)
+        lll = np.matrix(list(lll))
+        cliques = list(nx.enumerate_all_cliques(G))
+
+        triads = [i for i in cliques if len(i) == 3]
+        t = len(triads)
+
+        triadsA = np.array(triads)
+
+        A = triadsA[:, 0]
+        B = triadsA[:, 1]
+        C = triadsA[:, 2]
+        df = pd.DataFrame(triads)
+        A1 = lll[:, 0]
+        B1 = lll[:, 1]
+        C1 = lll[:, 2]
+
+        BCA = []
+        for x in (A):
+            for n in (BC):
+                if x == n:
+                    BCA.append(BC[n])
+
+        BCB = []
+        for y in (B):
+            for n in (BC):
+                if y == n:
+                    BCB.append(BC[n])
+
+        BCC = []
+        for z in (C):
+            for n in (BC):
+                if z == n:
+                    BCC.append(BC[n])
+
+        df['BCA'] = BCA
+        df['BCB'] = BCB
+        df['BCC'] = BCC
+        df['AVG'] = (df['BCA'] + df['BCB'] + df['BCC']) / 3
+        df['VAR'] = (((df['BCA'] - df['AVG']) ** 2 + (df['BCB'] - df['AVG']) ** 2 + (df['BCC'] - df['AVG']) ** 2) / 3)
+        VAR = np.sum(df['VAR'])
+        V = VAR / t
+        df1 = df[4:6]
+
+        dff = []
+        for k in G.nodes:
+            for n in (BC):
+                if k == n:
+                    dff.append(BC[n])
+
+        T = max(dff)
+
+        H = pd.DataFrame(dff)
+        H['BCMax'] = T
+        H.rename(columns={0: 'BCentrality'}, inplace=True)
+
+        H['Hier'] = (H['BCMax'] - H['BCentrality'])
+        Q: object = np.mean(H['Hier'])
+        v = Q * V
+
+        e = len(list(G.edges))
+        Density = (2 * e * ((num * (num - 1)) ** -1))
+        Clustering = nx.average_clustering(G)
+
+        def eccentricity(G):
+            n = len(G)
+            if n == 0:
+                msg = (
+                    "the null graph has no paths, thus there is no average"
+                    "shortest path length")
+                raise nx.NetworkXPointlessConcept(msg)
+            if n == 1:
+                return 0
+            if G.is_directed() and not nx.is_weakly_connected(G):
+                raise nx.NetworkXError("Graph is not weakly connected.")
+            if not G.is_directed() and not nx.is_connected(G):
+                raise nx.NetworkXError("Graph is not connected.")
+
+            def path_length(v):
+                return nx.single_source_shortest_path_length(G, v)
+
+            s = statistics.variance(l for u in G for l in path_length(u).values())
+            return s
+
+        P = np.matrix([V, Q, eccentricity(G), Density, t, num, e, Clustering])
+
+        return P
+
+
+    num_vars = 7
+
+    problem = {
+        'num_vars': 7,
+        'names': ['H', 'EX', 'D', 'T', 'Num', 'Edges', 'C'],
+        'groups': None
+    }
+
+    param_values = np.ndarray(shape=((num_vars + 1),), dtype=float)
+    for _ in range(1000 * (num_vars + 1)):
+        test()
+        param_values = np.vstack([param_values, test()])
+
+    param_values = np.delete(param_values, 0, 0)
+    Y = np.array(param_values[:, 0])
+    Y = Y.flatten()
+    param_values = np.delete(param_values, 0, 1)
+    param_values = np.array(param_values)
+
+    Si = analyze(problem, param_values, Y, num_resamples=1000, print_to_console=True)
+
+
+@bot.message_handler()
+                 
+def send_normal(message):
+    # Detect 'hi'
+    if message.text == 'hi':
+        bot.send_message(message.chat.id, 'Reply on hi')
+    elif message.text == 'help':
+        bot.send_message(message.chat.id, 'Reply on help')
+    elif message.text == 'Bene, tu?':
+        bot.send_message(message.chat.id, 'Come vuoi che stia? Nammerda')
+    elif message.text == 'bene, tu?':
+        bot.send_message(message.chat.id, 'Come vuoi che stia? Nammerda')
+    elif message.text == 'Bene tu?':
+        bot.send_message(message.chat.id, 'Come vuoi che stia? Nammerda')
+    elif message.text == 'Bene, tu?':
+        bot.send_message(message.chat.id, 'Come vuoi che stia? Nammerda')
+    elif message.text == 'ciao':
+        bot.send_message(message.chat.id, 'Ciao! Come stai?')
+    elif message.text == 'Ciao':
+        bot.send_message(message.chat.id, 'Ciao! Come stai?')
+    elif message.text == 'Come stai?':
+        bot.send_message(message.chat.id, 'Nammerda. Tu invece?')
+    elif message.text == 'come stai?':
+        bot.send_message(message.chat.id, 'Nammerda. Tu invece?')
+    elif message.text == 'come va?':
+        bot.send_message(message.chat.id, 'Nammerda. Tu invece?')
+    elif message.text == 'Sei felice?':
+        bot.send_message(message.chat.id, 'No.')
+    elif message.text == 'sei felice?':
+        bot.send_message(message.chat.id, 'No.')
+    elif message.text == 'Come va?':
+        bot.send_message(message.chat.id, 'Nammerda. Tu invece?')
+    elif message.text == 'Fottiti':
+        bot.send_message(message.chat.id, 'Fottiti')
+    elif message.text == 'fottiti':
+        bot.send_message(message.chat.id, 'fottiti')
+    elif message.text == 'Tutto nella norma':
+        bot.send_message(message.chat.id, 'Gaia hai rotto il cazzo con questa risposta di merda')
+    elif message.text == 'tutto nella norma':
+        bot.send_message(message.chat.id, 'Gaia hai rotto il cazzo con questa risposta di merda')
+    elif message.text == 'nella norma':
+        bot.send_message(message.chat.id, 'Gaia hai rotto il cazzo con questa risposta di merda')
+    elif message.text == 'Nella norma':
+        bot.send_message(message.chat.id, 'Gaia hai rotto il cazzo con questa risposta di merda')
+    elif 'norma' in message.text.split():
+        bot.send_message(message.chat.id, 'Gaia hai rotto il cazzo con questa risposta di merda')
+    elif message.text == 'Test':
+        bot.reply_to(message,'Inizio a lavorarci su. Ti ricordo che ci vorrà del tempo per questo tipo di test. Abbi '
+                             'pazienza. Ti avviso io quando ho finito. Non disturbarmi mentre lavoro: non risponderò '
+                             'ai tuoi messaggi finchè non avrò finito.'u'\U0001F525')
+        testone()
+        bot.reply_to(message,
+                     'fatto')
+    else:
+        bot.send_message(message.chat.id,
+                         'Non sono stata programmata per rispondere a questo messaggio. forse hai sbagliato a scrivere')
+
+bot = telebot.TeleBot('2126627383:AAEM7pl_2mnt8fDNhbW9vyG3eujua1RiOhU')
+print('Bot started...')
+
+
+
+bot.polling()
+
+@bot.message_handler(commands=['start'])
+def greet(message):
+    bot.reply_to(message,
+                 "Ciao! Sono l'assistente di Sashi. Puoi eseguire i seguenti test con me scrivendomi il nome del test "
+                 "che intendi eseguire. Ti ricordo che per alcuni test ci vorrà molto tempo. Non temere, ti avviserò "
+                 "non appena la tua richiesta è stata completata. Ecco i test che posso eseguire al momento: "
+                 
+                 " Scrivi 'Test' per eseguire una Morris Analysis.")
 
