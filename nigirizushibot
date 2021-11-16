@@ -154,9 +154,20 @@ def testone():
 
     Si = analyze(problem, param_values, Y, num_resamples=1000, print_to_console=True)
 
+bot = telebot.TeleBot('2126627383:AAEM7pl_2mnt8fDNhbW9vyG3eujua1RiOhU')
+print('Bot started...')
+
+@bot.message_handler(commands=['start'])
+def greet(message):
+    bot.reply_to(message,
+                 "Ciao! Sono l'assistente di Sashi. Puoi eseguire i seguenti test con me scrivendomi il nome del test "
+                 "che intendi eseguire. Ti ricordo che per alcuni test ci vorrà molto tempo. Non temere, ti avviserò "
+                 "non appena la tua richiesta è stata completata. Ecco i test che posso eseguire al momento: "
+
+                 " Scrivi 'Test' per eseguire una Morris Analysis.")
 
 @bot.message_handler()
-                 
+
 def send_normal(message):
     # Detect 'hi'
     if message.text == 'hi':
@@ -212,19 +223,10 @@ def send_normal(message):
         bot.send_message(message.chat.id,
                          'Non sono stata programmata per rispondere a questo messaggio. forse hai sbagliato a scrivere')
 
-bot = telebot.TeleBot('2126627383:AAEM7pl_2mnt8fDNhbW9vyG3eujua1RiOhU')
-print('Bot started...')
+
 
 
 
 bot.polling()
 
-@bot.message_handler(commands=['start'])
-def greet(message):
-    bot.reply_to(message,
-                 "Ciao! Sono l'assistente di Sashi. Puoi eseguire i seguenti test con me scrivendomi il nome del test "
-                 "che intendi eseguire. Ti ricordo che per alcuni test ci vorrà molto tempo. Non temere, ti avviserò "
-                 "non appena la tua richiesta è stata completata. Ecco i test che posso eseguire al momento: "
-                 
-                 " Scrivi 'Test' per eseguire una Morris Analysis.")
 
