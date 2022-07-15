@@ -7,57 +7,57 @@ from random import randrange
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-import contagion
 from bob_telegram_tools.bot import TelegramBot as tb
+import checknumber
 
 bot = telebot.TeleBot('2125748147:AAHiKWSFJ7vXqFBPLu0qjNYHPuFt1zL3uqo')
-
-
+print('Bot started...')
 data = []
-def step_Set_Price(message):
-    cid = message.chat.id
-    userPrice = message.text
+
+
 
 
 @bot.message_handler(commands=['start'])
 def greet(message):
     bot.reply_to(message,
-                 "Ciao! Sono il bot di Sashi. Sono la sua potenziale coscienza cibernetica. "
-                 "Sono stata sviluppata in una noiosa domenica. Se vuoi scrivermi, ricordati di scrivere "
-                 "correttamente. Evita punteggiatura eccessiva (e.g. !!!) . Evita di essere noiosə."
-                 "Sono anche la sua assistente virtuale. "
-                 "Se vuoi scoprire quali cose posso fare, chiedimi di mostrarti i /Commands che posso eseguire."
-                 "Ti ricordo vuoi esegurie delle analisi, devi contattare il mio collega https://t.me/Nigirizushibot")
+                 "Hi! I'm Sasshimibot, one of Sashi's /bots. I'm basically her cybernetic consciousness. I've been "
+                 "developed out of boredom and with the curiosity of exploring the uni-meta-cyberverse. "
+                 "My speaking capabilities are pretty limited. Nevertheless, I can do some calculations and SNA."
+                 "If you want to discover what I can do, ask me to show the /Analyses_menu by clicking/tapping on it.")
 
 
-@bot.message_handler(commands=['Commands'])
-def listacomandi(message):
-    bot.reply_to(message,
-                 "Qui puoi eseguire una serie di comandi. ecco una lista: \n/Contagion \n \n/Steps \n \n/Parameter_analysis."
-                 "\nIn order to execute a specific analysis, you just need to click on it")
-
-
-@bot.message_handler(commands=['Go_back_to_menu'])
-def listacomandi(message):
-    bot.reply_to(message,
-                 "Qui puoi eseguire una serie di comandi. ecco una lista: \n /Contagion\n \n /Steps \n \n /Parameter_analysis."
-                 "\nIn order to execute a specific analysis, you just need to click on it")
-
-
-@bot.message_handler(commands=['Contagion','Go_back_to_Contagion'])
+@bot.message_handler(commands=['bots'])
 def greet(message):
-    bot.reply_to(message, "Excellent choice, dear. This type of analysis will execute the Bass (1969), the DeGroot (1974)"
-                          "and the Piccione-Tolotti model (2022) on a randomly generated"
-                          "network (Barabasi random graph). Before proceeding, we need to define the parameters necessary."
-                          "For instance, we need to define:"
-                          "\nThe number of nodes on our network; \nThe k parameter (da spiegare); \nThe number of time steps;\nFinally,"
-                          "The number of simulations"
-                          "Do you want to proceed?"
-                          "\n/Yes_I_want_to_proceed_with_contagion_analysis"
-                          "\n/Go_back_to_menu")
+    bot.reply_to(message, "Hi! Here's a list of the bots that have been developed. Click on them in order to activate "
+                          "them!\n@sasshimibot \n \n@Nigirizushibot")
 
 
-@bot.message_handler(commands=['Yes_I_want_to_proceed_with_contagion_analysis','Yes_I_want_to_restart_the_contagion_analysis'])
+@bot.message_handler(commands=['Analyses_menu', 'Go_back_to_menu'])
+def listacomandi(message):
+    bot.reply_to(message,
+                 "Here you can see the different types of analyses that I can carry out for you. If you want further "
+                 "information regarding a specific analysis, tap on it. "
+                 "\nIn order to execute a specific analysis, you just need to click on it. \n/Contagion  \n \n/Parameter_analysis \n \n/Parameter_analysis_fixed \n\n/Opinion_dynamics \n\n/beta_distribution")
+
+
+@bot.message_handler(commands=['Contagion', 'Go_back_to_Contagion'])
+def greet(message):
+    bot.reply_to(message,
+                 "Excellent choice, dear. This type of analysis will execute the Bass (1969), the DeGroot (1974) (as "
+                 "modified by Assenova in 2018) and the Piccione-Tolotti model (2022) on a randomly generated"
+                 "network (Barabasi random graph). Before proceeding, we need to define the parameters necessary."
+                 "For instance, we need to define:"
+                 "\nThe number of nodes on our network; \nThe k parameter, which is the number of nodes to which each "
+                 "additional node is preferentially attached; \nThe number of time steps;\nThe number of "
+                 "simulations;\n the number of subjects that are aware of the information (infected) at time 0 \nIt "
+                 "will return several graphs representing the diffusion of an information (contagion throughout "
+                 "randomly generated network.) \nDo you want to proceed?"
+                 "\n\n/Yes_I_want_to_proceed_with_contagion_analysis"
+                 "\n/Go_back_to_menu")
+
+
+@bot.message_handler(
+    commands=['Yes_I_want_to_proceed_with_contagion_analysis', 'Yes_I_want_to_restart_the_contagion_analysis'])
 def handle_text(message):
     del data[:]
     cid = message.chat.id
@@ -65,38 +65,40 @@ def handle_text(message):
     bot.register_next_step_handler(msgValuenodes, step_Set_Valuenodes)
 
 
-
 def step_Set_Valuenodes(message):
     userValuenodes = message.text
     if userValuenodes.isnumeric() == True:
         print(userValuenodes)
         msgValuek = bot.send_message(message.chat.id,
-                                 'The network will have {} nodes. \nWhat is the value of k? (suggested, between 1 and 15)'.format(
-                                     userValuenodes))
+                                     'The network will have {} nodes. \nWhat is the value of k? (suggested, between 1 and 15)'.format(
+                                         userValuenodes))
         bot.register_next_step_handler(msgValuek, step_Set_Valuek)
         data.append(int(userValuenodes))
     else:
-        bot.send_message(message.chat.id, "The input is not valid. Utilize only integer numbers. The process is being interrupted. Do you want"
-                                          " to restart the process"
-                                          "\n/Yes_I_want_to_restart_the_contagion_analysis"
-                                          "\n No, /Go_back_to_menu")
+        bot.send_message(message.chat.id,
+                         "The input is not valid. Utilize only integer numbers. The process is being interrupted. Do you want"
+                         " to restart the process"
+                         "\n/Yes_I_want_to_restart_the_contagion_analysis"
+                         "\n No, /Go_back_to_menu")
 
 
 def step_Set_Valuek(message):
     userValuek = message.text
     if userValuek.isnumeric() == True:
         if 1 < int(userValuek) < data[0]:
-            print(userValuek)
-            msgValuesteps = bot.send_message(message.chat.id,
-                                             'The parameter k will have a value of {}. \nHow many steps do we want in each simulation?'.format(
-                                                 userValuek))
-            bot.register_next_step_handler(msgValuesteps, step_Set_Valuesteps)
-            data.append(int(userValuek))
+            if int(userValuek) < 15:
+                print(userValuek)
+                msgValuesteps = bot.send_message(message.chat.id,
+                                                 'The parameter k will have a value of {}. \nHow many steps do we want in each simulation?'.format(
+                                                     userValuek))
+                bot.register_next_step_handler(msgValuesteps, step_Set_Valuesteps)
+                data.append(int(userValuek))
         else:
-            bot.send_message(message.chat.id, "Attention! The parameter k has to be lower than the number of nodes and higher than 1."
-                                              " The process is being interrupted. Do you want to restart the process?"
-                                              "\n/Yes_I_want_to_restart_the_contagion_analysis"
-                                              "\n No, /Go_back_to_menu")
+            bot.send_message(message.chat.id,
+                             "Attention! The parameter k has to be lower than the number of nodes and higher than 1."
+                             " The process is being interrupted. Do you want to restart the process?"
+                             "\n/Yes_I_want_to_restart_the_contagion_analysis"
+                             "\n No, /Go_back_to_menu")
 
     else:
         bot.send_message(message.chat.id,
@@ -104,7 +106,6 @@ def step_Set_Valuek(message):
                          " to restart the process?"
                          "\n/Yes_I_want_to_restart_the_contagion_analysis"
                          "\n No, /Go_back_to_menu")
-
 
 
 def step_Set_Valuesteps(message):
@@ -124,7 +125,6 @@ def step_Set_Valuesteps(message):
                                           "\n No, /Go_back_to_menu")
 
 
-
 def step_Set_Valuesimulations(message):
     userValuesimulations = message.text
     if userValuesimulations.isnumeric() == True:
@@ -132,14 +132,16 @@ def step_Set_Valuesimulations(message):
         bot.send_message(message.chat.id, "{} simulations will be carried out.".format(userValuesimulations))
         data.append(int(userValuesimulations))
         msgValueprime = bot.send_message(message.chat.id, "How many subjects are aware of the information at time 0?")
-        bot.register_next_step_handler(msgValueprime,step_set_Valueprime)
+        bot.register_next_step_handler(msgValueprime, step_set_Valueprime)
+
 
 def step_set_Valueprime(message):
     userValueprime = message.text
-    if userValueprime.isnumeric()==True:
+    if userValueprime.isnumeric() == True:
         print(userValueprime)
         data.append(int(userValueprime))
-        bot.send_message(message.chat.id, "{} people will be aware of the information at time t=0.".format(userValueprime))
+        bot.send_message(message.chat.id,
+                         "{} people will be aware of the information at time t=0.".format(userValueprime))
         message_confirmation = bot.send_message(message.chat.id,
                                                 "Summarizing. \nYou want to carry out {} simulations, each of which composed by {} time steps"
                                                 " regarding the Bass, the DeGroot and the Piccione-Tolotti models on a network of {} nodes built with a k of value."
@@ -147,7 +149,8 @@ def step_set_Valueprime(message):
                                                 "\nDo you confirm?"
                                                 "\n/Yes"
                                                 "\n/Go_back (click twice)"
-                                                "\n/Go_back_to_menu (click twice)".format(data[3], data[2], data[0], data[1], data[4]))
+                                                "\n/Go_back_to_menu (click twice)".format(data[3], data[2], data[0],
+                                                                                          data[1], data[4]))
         bot.register_next_step_handler(message_confirmation, carryiton)
 
     else:
@@ -168,8 +171,9 @@ def carryiton(message):
         steps = data[2]
         par = data[1]
         num = data[0]
-        primini=data[4]
+        primini = data[4]
         m = 0
+
         def tutto():
             p = par
 
@@ -312,7 +316,6 @@ def carryiton(message):
                 G.nodes[n]['ego'] = randrange(4, 9) / 10
             nx.set_node_attributes(G, 0, name='relevance')
             primi = random.sample(range(0, num), primini)
-
             for n in primi:
                 G.nodes[n]['relevance'] = 1
 
@@ -367,7 +370,6 @@ def carryiton(message):
                             if P.nodes[j]['relevance'] >= P.nodes[j]['threshold']:
                                 if random.random() < probability_matrix[i, j]:
                                     opchange.append(influence_matrix[i, j])
-
                         opchange.append(P.nodes[i]['relevance'])
                         K.nodes[i]["relevance"] = np.sum(opchange) - K.nodes[i]['theta']
                     return K
@@ -401,7 +403,7 @@ def carryiton(message):
                             if P.nodes[j]['relevance'] >= P.nodes[j]['threshold']:
                                 if random.random() < probability_matrix[i, j]:
                                     opchange.append(influence_matrix[i, j] * P.nodes[j]['relevance'])
-                                if random.random() > probability_matrix[i, j]:
+                                else:
                                     opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
                             if P.nodes[j]['relevance'] < P.nodes[j]['threshold']:
                                 opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
@@ -477,18 +479,18 @@ def carryiton(message):
         while m != iters:
             banana = tutto()
             executiontime = (time.time() - startTime)
-            ETA = int((((executiontime / (m+1)) * (iters - m))) / 60)
+            ETA = int((((executiontime / (m + 1)) * (iters - m))) / 60)
             print(int((m / iters) * 100), '% Estimated time remaining:',
                   ETA,
                   'minutes')
-            if m== steps/10:
+            if m == steps / 10:
                 bot.send_message(message.chat.id, 'Hi! 'u'\U0001F916 just to let you know that the analysis has been'
                                                   ' set properly! 10% of the process has been carried out!'
                                                   '\nEstimated time remaining: {} minutes'.format(ETA))
-            elif m==steps/2:
+            elif m == steps / 2:
                 bot.send_message(message.chat.id, 'Hi! 'u'\U0001F916 just to let you know that we are half-way done!'
                                                   '\nEstimated time remaining: {} minutes'.format(ETA))
-            elif m==steps*0.9:
+            elif m == steps * 0.9:
                 bot.send_message(message.chat.id, 'Hi! 'u'\U0001F916 just to let you know that we are nearly done!'
                                                   '\n90% of the process has been carried out!'
                                                   '\nEstimated time remaining: {} minutes'.format(ETA))
@@ -510,7 +512,7 @@ def carryiton(message):
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
         datcumulatividegroot = np.array(cumulativedegroot)
         for n in datcumulatividegroot:
             if n[0] < 1:
@@ -521,7 +523,7 @@ def carryiton(message):
         plt.xlabel('Time steps')
         plt.ylabel('Cumulative adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
         lst = []
         n = len(tutto()[0][0])
         for i in range(n + 0):
@@ -540,13 +542,13 @@ def carryiton(message):
         plt.plot(minimo[1:], label='minimum')
         plt.plot(massimo[1:], label='maximum')
         plt.plot(media[1:], label='mean')
-        plt.plot(mediana[1:], 'r--',label='median')
+        plt.plot(mediana[1:], 'r--', label='median')
         plt.legend()
         plt.title('DeGroot model (as modified by Assenova 2018)')
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
 
         datcontagion = np.array(actualcontagion)
         for n in datcontagion:
@@ -558,7 +560,7 @@ def carryiton(message):
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
         datcumulativicontagion = np.array(cumulativecontagion)
         for n in datcumulativicontagion:
             if n[0] < 1:
@@ -569,7 +571,7 @@ def carryiton(message):
         plt.xlabel('Time steps')
         plt.ylabel('Cumulative adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
         lstcontagion = []
         n = len(tutto()[1][0])
         for i in range(n + 0):
@@ -587,13 +589,13 @@ def carryiton(message):
         plt.plot(minimo[1:], label='minimum')
         plt.plot(massimo[1:], label='maximum')
         plt.plot(media[1:], label='mean')
-        plt.plot(mediana[1:], 'r--',label='median')
+        plt.plot(mediana[1:], 'r--', label='median')
         plt.legend()
         plt.title('Piccione-Tolotti 2022')
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
 
         datbass = np.array(actualbass)
         for n in datbass:
@@ -605,7 +607,7 @@ def carryiton(message):
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
         datcumulativibass = np.array(cumulativebass)
         for n in datcumulativibass:
             if n[0] < 1:
@@ -616,7 +618,7 @@ def carryiton(message):
         plt.xlabel('Time steps')
         plt.ylabel('Cumulative adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
         lstbass = []
         n = len(tutto()[2][0])
         for i in range(n + 0):
@@ -635,136 +637,169 @@ def carryiton(message):
         plt.plot(minimo[1:], label='minimum')
         plt.plot(massimo[1:], label='maximum')
         plt.plot(media[1:], label='mean')
-        plt.plot(mediana[1:], 'r--',label='median')
+        plt.plot(mediana[1:], 'r--', label='median')
         plt.legend()
         plt.title('Bass (1969) model')
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        print(data)
-        plt.clf()
-        del data[:]
+        plt.cla()
+        msgreplay = bot.send_message(message.chat.id,'Do you want to repeat the analysis with the same '
+                                                             'parameters?  \n/Yes\nNo, /Go_back_to_menu')
+        bot.register_next_step_handler(msgreplay,carryiton)
 
 
-
-@bot.message_handler(commands=['Steps'])
+@bot.message_handler(commands=['Parameter_analysis_fixed'])
 def greet(message):
-    bot.reply_to(message, "we still need to develop this part of the program. please, stay tuned. \nYou may want to check"
-                 "the other /Commands")
-
-@bot.message_handler(commands=['Parameter_analysis'])
-def greet(message):
-    bot.reply_to(message, "Excellent choice, dear. This type of analysis will execute the Bass (1969), the DeGroot (1974)"
-                          "and the Piccione-Tolotti model (2022) on a randomly generated"
-                          "network (Barabasi random graph). Before proceeding, we need to define the parameters necessary."
-                          "For instance, we need to define:"
-                          "\nThe number of nodes on our network; \nThe k parameter (da spiegare); \nThe number of time steps;\nFinally,"
-                          "The number of simulations"
-                          "Do you want to proceed?"
-                          "\n/Yes_I_want_to_proceed_with_parameter_analysis"
-                          "\n/Go_back_to_menu")
+    bot.reply_to(message,
+                 "Excellent choice, dear. This type of analysis will execute the Piccione-Tolotti model (2022) on a "
+                 "randomly generated network (Barabasi random graph). In this case, all the simulations will be "
+                 "carried out on the same network and with the same subject aware of the information (infected) at "
+                 "time 0. By leaving these aspects fixed, we can better see the divergences (in terms of diffusion) "
+                 "that the Piccione-Tolotti model allows to represent if compared with previous models.Before "
+                 "proceeding, we need to define the parameters necessary. For instance, we need to define:"
+                 "\nThe number of nodes on our network; \nThe k parameter, which is the number of nodes to which each "
+                 "additional node is preferentially attached; \nThe number of time steps;\nThe number of "
+                 "simulations;\n the number of subjects that are aware of the information (infected) at time 0 \nIt "
+                 "will return several graphs representing the diffusion of an information (contagion throughout "
+                 "randomly generated network.) \nDo you want to proceed?"
+                 "\n\n/Yes_I_want_to_proceed_with_parameter_analysis_fixed"
+                 "\n/Go_back_to_menu")
 
 
 @bot.message_handler(
-        commands=['Yes_I_want_to_proceed_with_parameter_analysis','Yes_I_want_to_restart_the_parameter_analysis'])
+    commands=['Yes_I_want_to_proceed_with_parameter_analysis_fixed',
+              'Yes_I_want_to_restart_the_parameter_analysis_fixed'])
 def handle_text(message):
-        del data[:]
-        cid = message.chat.id
-        msgValuenodes2 = bot.send_message(cid, 'How many nodes does the network have?')
-        bot.register_next_step_handler(msgValuenodes2, step_Set_Valuenodes2)
+    del data[:]
+    cid = message.chat.id
+    msgValuenodes_fixed = bot.send_message(cid, 'How many nodes does the network have?')
+    bot.register_next_step_handler(msgValuenodes_fixed, step_Set_Valuenodes_fixed)
 
-def step_Set_Valuenodes2(message):
-    userValuenodes2 = message.text
-    if userValuenodes2.isnumeric() == True:
-        print(userValuenodes2)
-        msgValuek2 = bot.send_message(message.chat.id,
-                                     'The network will have {} nodes. \nWhat is the value of k? (suggested, between 2 and 15)'.format(
-                                         userValuenodes2))
-        bot.register_next_step_handler(msgValuek2, step_Set_Valuek2)
-        data.append(int(userValuenodes2))
+
+def step_Set_Valuenodes_fixed(message):
+    userValuenodes_fixed = message.text
+    if userValuenodes_fixed.isnumeric() == True:
+        print(userValuenodes_fixed)
+        msgValuek_fixed = bot.send_message(message.chat.id,
+                                           'The network will have {} nodes. \nWhat is the value of k? (suggested, between 2 and 15)'.format(
+                                               userValuenodes_fixed))
+        bot.register_next_step_handler(msgValuek_fixed, step_Set_Valuek_fixed)
+        data.append(int(userValuenodes_fixed))
     else:
         bot.send_message(message.chat.id,
                          "The input is not valid. Utilize only integer numbers. The process is being interrupted. Do you want"
                          " to restart the process"
-                         "\n/Yes_I_want_to_restart_the_parameter_analysis"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis_fixed"
                          "\n No, /Go_back_to_menu")
 
-def step_Set_Valuek2(message):
-    userValuek2 = message.text
-    if userValuek2.isnumeric() == True:
-        if 1 < int(userValuek2) < data[0]:
-            print(userValuek2)
-            msgValuesteps2 = bot.send_message(message.chat.id,
-                                             'The parameter k will have a value of {}. \nHow many steps do we want in each simulation?'.format(
-                                                 userValuek2))
-            bot.register_next_step_handler(msgValuesteps2, step_Set_Valuesteps2)
-            data.append(int(userValuek2))
+
+def step_Set_Valuek_fixed(message):
+    userValuek_fixed = message.text
+    if userValuek_fixed.isnumeric() == True:
+        if 1 < int(userValuek_fixed) < data[0]:
+            if int(userValuek_fixed) < 15:
+                print(userValuek_fixed)
+                msgValuesteps_fixed = bot.send_message(message.chat.id,
+                                                       'The parameter k will have a value of {}. \nHow many steps do we want in each simulation?'.format(
+                                                           userValuek_fixed))
+                bot.register_next_step_handler(msgValuesteps_fixed, step_Set_Valuesteps_fixed)
+                data.append(int(userValuek_fixed))
         else:
-            bot.send_message(message.chat.id, "Attention! The parameter k has to be lower than the number of nodes and higher than 1."
-                                              " The process is being interrupted. Do you want to restart the process?"
-                                              "\n/Yes_I_want_to_restart_the_parameter_analysis"
-                                              "\n No, /Go_back_to_menu")
+            bot.send_message(message.chat.id,
+                             "Attention! The parameter k has to be lower than the number of nodes and higher than 1."
+                             " The process is being interrupted. Do you want to restart the process?"
+                             "\n/Yes_I_want_to_restart_the_parameter_analysis_fixed"
+                             "\n No, /Go_back_to_menu")
 
     else:
         bot.send_message(message.chat.id,
                          "Utilize only integer numbers. The process is being interrupted. Do you want"
                          " to restart the process?"
-                         "\n/Yes_I_want_to_restart_the_parameter_analysis"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis_fixed"
                          "\n No, /Go_back_to_menu")
 
-def step_Set_Valuesteps2(message):
-    userValuesteps2 = message.text
-    if userValuesteps2.isnumeric() == True:
-        print(userValuesteps2)
-        msgValuesimulations2 = bot.send_message(message.chat.id,
-                                               'The number of steps for each simulation will be {}.'
-                                               '\nHow many times do you want to repeat the simulations?'.format(
-                                                   userValuesteps2))
-        bot.register_next_step_handler(msgValuesimulations2, step_Set_Valuesimulations2)
-        data.append(int(userValuesteps2))
+
+def step_Set_Valuesteps_fixed(message):
+    userValuesteps_fixed = message.text
+    if userValuesteps_fixed.isnumeric() == True:
+        print(userValuesteps_fixed)
+        msgValuesimulations_fixed = bot.send_message(message.chat.id,
+                                                     'The number of steps for each simulation will be {}.'
+                                                     '\nHow many times do you want to repeat the simulations?'.format(
+                                                         userValuesteps_fixed))
+        bot.register_next_step_handler(msgValuesimulations_fixed, step_Set_Valuesimulations_fixed)
+        data.append(int(userValuesteps_fixed))
 
     else:
         bot.send_message(message.chat.id,
                          "Utilize only integer numbers. The process is being interrupted. Do you want"
                          " to restart the process?"
-                         "\n/Yes_I_want_to_restart_the_parameter_analysis"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis_fixed"
                          "\n No, /Go_back_to_menu")
 
 
+def step_Set_Valuesimulations_fixed(message):
+    userValuesimulations_fixed = message.text
+    if userValuesimulations_fixed.isnumeric() == True:
+        print(userValuesimulations_fixed)
+        msgValueprime2 = bot.send_message(message.chat.id,
+                                          "{} simulations will be carried out. What is the adoption threshold? (between 0 and 1) ".format(
+                                              userValuesimulations_fixed))
+        data.append(int(userValuesimulations_fixed))
+        bot.register_next_step_handler(msgValueprime2, step_set_Valuethreshold_fixed)
+    else:
+        bot.send_message(message.chat.id,
+                         "Utilize only integer numbers. The process is being interrupted. Do you want"
+                         " to restart the process?"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis_fixed"
+                         "\n No, /Go_back_to_menu")
 
-def step_Set_Valuesimulations2(message):
-    userValuesimulations2 = message.text
-    if userValuesimulations2.isnumeric() == True:
-        print(userValuesimulations2)
-        msgValueprime2= bot.send_message(message.chat.id, "{} simulations will be carried out. \nHow many subjects are aware of the information at time 0?".format(userValuesimulations2))
-        data.append(int(userValuesimulations2))
-        bot.register_next_step_handler(msgValueprime2,step_set_Valueprime2)
 
-def step_set_Valueprime2(message):
-    userValueprime2 = message.text
-    if userValueprime2.isnumeric()==True:
-        print(userValueprime2)
-        bot.send_message(message.chat.id, "{} people will be aware of the information at time t=0.".format(userValueprime2))
-        data.append(int(userValueprime2))
-        message_confirmation2 = bot.send_message(message.chat.id,
-                                                "Summarizing. \nYou want to carry out {} simulations, each of which composed by {} time steps"
-                                                " regarding the Bass, the DeGroot and the Piccione-Tolotti models on a network of {} nodes built with a k of value {}."
-                                                "\nAt time 0, {} will be aware of the information"
-                                                "\nDo you confirm?"
-                                                "\n/Yes"
-                                                "\n/Go_back (click twice)"
-                                                "\n/Go_back_to_menu (click twice)".format(data[3], data[2], data[0], data[1], data[4]))
-        bot.register_next_step_handler(message_confirmation2, carryiton2)
+def step_set_Valuethreshold_fixed(message):
+    userValuethreshold_fixed = message.text
+    if checknumber.check(userValuethreshold_fixed):
+        print(userValuethreshold_fixed)
+        msgValuethreshold_fixed=bot.send_message(message.chat.id, 'The value of the threshold will be {}.  \nHow many '
+                                                                  'subjects are aware of the information at time 0?'.format(userValuethreshold_fixed))
+        data.append(float(userValuethreshold_fixed))
+        bot.register_next_step_handler(msgValuethreshold_fixed,step_set_Valueprime_fixed)
+    else:
+        bot.send_message(message.chat.id,
+                         "Utilize only integer numbers. The process is being interrupted. Do you want"
+                         " to restart the process?"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis_fixed"
+                         "\n No, /Go_back_to_menu")
+
+def step_set_Valueprime_fixed(message):
+    userValueprime_fixed = message.text
+    if userValueprime_fixed.isnumeric():
+        print(userValueprime_fixed)
+        bot.send_message(message.chat.id,
+                         "{} people will be aware of the information at time t=0.".format(userValueprime_fixed))
+        data.append(int(userValueprime_fixed))
+        message_confirmation_fixed = bot.send_message(message.chat.id,
+                                                      "Summarizing. \nYou want to carry out {} simulations, each of which composed by {} time steps"
+                                                      " regarding the Bass, the DeGroot and the Piccione-Tolotti models on a network of {} nodes built with a k of value {}."
+                                                      "\nAt time 0, {} will be aware of the information"
+                                                      "\nDo you confirm?"
+                                                      "\n/Yes"
+                                                      "\n/Go_back (click twice)"
+                                                      "\n/Go_back_to_menu (click twice)".format(data[3], data[2],
+                                                                                                data[0],
+                                                                                                data[1], data[4]))
+        bot.register_next_step_handler(message_confirmation_fixed, carryiton_fixed)
 
 
     else:
         bot.send_message(message.chat.id,
                          "Utilize only integer numbers. The process is being interrupted. Do you want"
                          " to restart the process?"
-                         "\n/Yes_I_want_to_restart_the_parameter_analysis"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis_fixed"
                          "\n No, /Go_back_to_menu")
 
-def carryiton2(message):
+
+def carryiton_fixed(message):
     if '/Yes' in message.text.split():
         bot.send_message(message.chat.id, "Perfect! The process has been initiated! You will soon receive updates"
                                           " regarding the prosecution of the analyses. Please, for the time remaining,"
@@ -775,13 +810,19 @@ def carryiton2(message):
         steps = data[2]
         par = data[1]
         num = data[0]
-        primini = data[4]
+        thr = data[4]
+        primini = data[5]
         m = 0
-        def tutto():
-            p = par
+        p = par
+        primi = random.sample(range(0, num), primini)
+        F = nx.random_tree(n=num, create_using=nx.DiGraph, )
+        G = nx.barabasi_albert_graph(num, p)
 
-            F = nx.random_tree(n=num, create_using=nx.DiGraph, )
-            G = nx.barabasi_albert_graph(num, p)
+        def tutto():
+
+            nx.set_node_attributes(G, 0, name='relevance')
+            for n in primi:
+                G.nodes[n]['relevance'] = 1
 
             def combine(arr, s):
                 return list(combinations(arr, s))
@@ -917,14 +958,9 @@ def carryiton2(message):
             nx.set_edge_attributes(G, 0, name='ego')
             for n in G.nodes:
                 G.nodes[n]['ego'] = randrange(4, 9) / 10
-            nx.set_node_attributes(G, 0, name='relevance')
-            primi = random.sample(range(0, num), primini)
 
-            for n in primi:
-                G.nodes[n]['relevance'] = 1
-
-            def modelling(meansup, meansequal, meansdown, meannup, meannequal, meanndown, meanthr, sigmas, sigman,
-                          sigmathr):
+            def modelling(meansup, meansequal, meansdown, meannup, meannequal, meanndown, sigmas, sigman,
+                          ):
                 """
                 sup is when the information is going upward, down when it goes downward. if the information is going
                 upword, it means that subject i is the superior
@@ -939,11 +975,14 @@ def carryiton2(message):
                         if i != j:
                             if j in G.neighbors(i):
                                 if BC[i] - BC[j] < 0:
-                                    influence_matrix[i, j] = np.random.normal(meanndown, sigman) / len(list(G.neighbors(i)))
+                                    influence_matrix[i, j] = np.random.normal(meanndown, sigman) / len(
+                                        list(G.neighbors(i)))
                                 elif BC[i] - BC[j] > 0:
-                                    influence_matrix[i, j] = np.random.normal(meannup, sigman) / len(list(G.neighbors(i)))
+                                    influence_matrix[i, j] = np.random.normal(meannup, sigman) / len(
+                                        list(G.neighbors(i)))
                                 elif BC[i] - BC[j] == 0:
-                                    influence_matrix[i, j] = np.random.normal(meannequal, sigman) / len(list(G.neighbors(i)))
+                                    influence_matrix[i, j] = np.random.normal(meannequal, sigman) / len(
+                                        list(G.neighbors(i)))
                         if influence_matrix[i, j] < 0:
                             influence_matrix[i, j] = 0
                         elif influence_matrix[i, j] > 1:
@@ -975,14 +1014,9 @@ def carryiton2(message):
                         elif probability_matrix[i, j] > 1:
                             probability_matrix[i, j] = 1
 
-
                 nx.set_edge_attributes(G, 0, name='threshold')
                 for n in G.nodes:
-                    G.nodes[n]['threshold'] = np.random.normal(meanthr, sigmathr)
-                    if G.nodes[n]['threshold'] > 1:
-                        G.nodes[n]['threshold'] = 1
-                    elif G.nodes[n]['threshold'] < 0:
-                        G.nodes[n]['threshold'] = 0
+                    G.nodes[n]['threshold'] = thr
 
 
                 K = G.copy()
@@ -997,50 +1031,57 @@ def carryiton2(message):
                             if P.nodes[j]['relevance'] >= P.nodes[j]['threshold']:
                                 if random.random() < probability_matrix[i, j]:
                                     opchange.append(influence_matrix[i, j] * P.nodes[j]['relevance'])
-                                if random.random() > probability_matrix[i, j]:
+                                else:
                                     opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
                             if P.nodes[j]['relevance'] < P.nodes[j]['threshold']:
                                 opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
                         K.nodes[i]["relevance"] = np.sum(opchange)
+                        if K.nodes[i]["relevance"] > 1:
+                            K.nodes[i]["relevance"] = 1
 
                     return K
 
-                dati = [Vl,(primini/num)]
-                datelli = [(primini/num)]
+                dati = [Vl, (primini / num)]
+                datelli = [(primini / num)]
+                datini = [0]
                 while t != steps:
 
                     event()
                     P = []
+                    P2 = []
                     for n in K.nodes:
                         if K.nodes[n]['relevance'] >= K.nodes[n]['threshold']:
                             P.append(K.nodes[n]['relevance'])
                             if n not in bellini:
                                 bellini.append(n)
+                        P2.append(K.nodes[n]['relevance'])
                     dati.append((len(P) / num))
                     datelli.append((len(bellini) / num))
+                    datini.append(np.mean(P2))
                     t += 1
 
-                return [dati, datelli]
+                return [dati, datelli, datini]
 
             """
                     sup is when the information is going upward, down when it goes downward. if the information is going
                     upword, it means that subject i is the superior
-    
-    
+
+
                     for mean 0.8 is max and 0.2 minimum
                     for sigma 0.05 is max and 0.01 is minimum
                     """
 
-            return [modelling(meansup=1, meansequal=1, meansdown=1, meannup=1, meannequal=1, meanndown=1, meanthr=0.01,
-                              sigmas=0, sigman=0, sigmathr=0),
-                    modelling(meansup=1, meansequal=1, meansdown=1, meannup=1, meannequal=1, meanndown=1, meanthr=0.9,
-                              sigmas=0, sigman=0, sigmathr=0),
-                    modelling(meansup=0.2, meansequal=0.4, meansdown=0.6, meannup=0.2, meannequal=0.4, meanndown=0.6, meanthr=0.9,
-                              sigmas=0, sigman=0, sigmathr=0),
-                    modelling(meansup=0.2, meansequal=0.4, meansdown=0.6, meannup=0.2, meannequal=0.4, meanndown=0.6, meanthr=0.9,
-                              sigmas=0.01, sigman=0.05, sigmathr=0.05),
-                    modelling(meansup=0.6, meansequal=0.7, meansdown=0.8, meannup=0.2, meannequal=0.4, meanndown=0.6,meanthr=0.9,
-                              sigmas=0.01, sigman=0.05, sigmathr=0.05),Vl]
+            return [modelling(meansup=1, meansequal=1, meansdown=1, meannup=1, meannequal=1, meanndown=1,
+                              sigmas=0, sigman=0),
+                    modelling(meansup=1, meansequal=1, meansdown=1, meannup=1, meannequal=1, meanndown=1,
+                              sigmas=0, sigman=0),
+                    modelling(meansup=0.0, meansequal=0.4, meansdown=0.6, meannup=0.2, meannequal=0.4, meanndown=0.6,
+
+                              sigmas=0, sigman=0),
+                    modelling(meansup=0.0, meansequal=0.4, meansdown=0.6, meannup=0.2, meannequal=0.4, meanndown=0.6,
+                              sigmas=0.01, sigman=0.05),
+                    modelling(meansup=0.2, meansequal=0.7, meansdown=0.8, meannup=0.2, meannequal=0.4, meanndown=0.6,
+                              sigmas=0.01, sigman=0.05), Vl]
 
         """
         the first one is with no thresholod
@@ -1060,6 +1101,12 @@ def carryiton2(message):
         cumulativeC = []
         cumulativeD = []
         cumulativeE = []
+        opinionA = []
+        opinionB = []
+        opinionC = []
+        opinionD = []
+        opinionE = []
+
         startTime = time.time()
 
         while m != iters:
@@ -1081,7 +1128,8 @@ def carryiton2(message):
                                                   '\n90% of the process has been carried out!'
                                                   '\nEstimated time remaining: {} minutes'.format(ETA))
             m += 1
-            print(int((m / iters) * 100), '% Estimated time remaining:', int((((executiontime / (m)) * (iters - m))) / 60),
+            print(int((m / iters) * 100), '% Estimated time remaining:',
+                  int((((executiontime / (m)) * (iters - m))) / 60),
                   'minutes')
             DATONIA.append(banana[0][0])
             DATONIB.append(banana[1][0])
@@ -1094,6 +1142,11 @@ def carryiton2(message):
             cumulativeC.append((banana[2][1]))
             cumulativeD.append((banana[3][1]))
             cumulativeE.append((banana[4][1]))
+            opinionA.append((banana[0][2]))
+            opinionB.append((banana[1][2]))
+            opinionC.append((banana[2][2]))
+            opinionD.append((banana[3][2]))
+            opinionE.append((banana[4][2]))
 
         dat = np.array(DATONIA)
         for n in dat:
@@ -1105,7 +1158,7 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
         datcumulativeA = np.array(cumulativeA)
         for n in datcumulativeA:
             if n[0] < 1:
@@ -1116,7 +1169,18 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Cumulative adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
+        datopinionA = np.array(opinionA)
+        for n in datopinionA:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 1: Every parameter is fixed')
+        plt.xlabel('Time steps')
+        plt.ylabel('Average Opinion')
+        bott.send_plot(plt)
+        plt.cla()
         lstDATONIA = []
         n = len(tutto()[1][0])
         for i in range(n + 0):
@@ -1133,13 +1197,13 @@ def carryiton2(message):
         plt.plot(minimo[1:], label='minimum')
         plt.plot(massimo[1:], label='maximum')
         plt.plot(media[1:], label='mean')
-        plt.plot(mediana[1:], 'r--',label='median')
+        plt.plot(mediana[1:], 'r--', label='median')
         plt.legend()
         plt.title('step 1: Every parameter is fixed')
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
 
         dat = np.array(DATONIB)
         for n in dat:
@@ -1151,7 +1215,7 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
         datcumulativeB = np.array(cumulativeB)
         for n in datcumulativeB:
             if n[0] < 1:
@@ -1162,7 +1226,18 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Cumulative adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
+        datopinionB = np.array(opinionB)
+        for n in datopinionB:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 2: a (random) threshold is assigned')
+        plt.xlabel('Time steps')
+        plt.ylabel('Average Opinion')
+        bott.send_plot(plt)
+        plt.cla()
         lstDATONIB = []
         n = len(tutto()[1][0])
         for i in range(n + 0):
@@ -1185,7 +1260,7 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
 
         dat = np.array(DATONIC)
         for n in dat:
@@ -1197,7 +1272,7 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
         datcumulativeC = np.array(cumulativeC)
         for n in datcumulativeC:
             if n[0] < 1:
@@ -1208,7 +1283,18 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Cumulative adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
+        datopinionC = np.array(opinionC)
+        for n in datopinionC:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 3: introducing differences between levels')
+        plt.xlabel('Time steps')
+        plt.ylabel('Average Opinion')
+        bott.send_plot(plt)
+        plt.cla()
         lstDATONIC = []
         n = len(tutto()[1][0])
         for i in range(n + 0):
@@ -1231,7 +1317,7 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
 
         dat = np.array(DATONID)
         for n in dat:
@@ -1243,7 +1329,7 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
         datcumulativeD = np.array(cumulativeD)
         for n in datcumulativeD:
             if n[0] < 1:
@@ -1254,7 +1340,18 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Cumulative adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
+        datopinionD = np.array(opinionD)
+        for n in datopinionD:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 4: introducing differences between Simmelian and non simmelian (sigma)')
+        plt.xlabel('Time steps')
+        plt.ylabel('Average Opinion')
+        bott.send_plot(plt)
+        plt.cla()
         lstDATONID = []
         n = len(tutto()[1][0])
         for i in range(n + 0):
@@ -1277,7 +1374,7 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
 
         dat = np.array(DATONIE)
         for n in dat:
@@ -1289,7 +1386,7 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
         datcumulativeE = np.array(cumulativeE)
         for n in datcumulativeE:
             if n[0] < 1:
@@ -1300,7 +1397,18 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Cumulative adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
+        datopinionE = np.array(opinionE)
+        for n in datopinionE:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 5: introducing differences between Simmelian and non simmelian (sigma and mean')
+        plt.xlabel('Time steps')
+        plt.ylabel('Average Opinion')
+        bott.send_plot(plt)
+        plt.cla()
         lstDATONIE = []
         n = len(tutto()[1][0])
         for i in range(n + 0):
@@ -1323,13 +1431,1386 @@ def carryiton2(message):
         plt.xlabel('Time steps')
         plt.ylabel('Actual adoption rate')
         bott.send_plot(plt)
-        plt.clf()
+        plt.cla()
+
+        msgreplayfixed = bot.send_message(message.chat.id,'Do you want to repeat the analysis with the same '
+                                                             'parameters?  \n/Yes\nNo, /Go_back_to_menu')
+        bot.register_next_step_handler(msgreplayfixed,carryiton_fixed)
+
+
+@bot.message_handler(commands=['Parameter_analysis'])
+def greet(message):
+    bot.reply_to(message,
+                 "Excellent choice, dear. This type of analysis will execute the Piccione-Tolotti model (2022) on "
+                 "randomly generated networks (Barabasi random graph). In this case, all the simulations will be "
+                 "carried out on the different networks Before proceeding, we need to define the parameters "
+                 "necessary. For instance, we need to define: "
+                 "\nThe number of nodes on our network; \nThe k parameter, which is the number of nodes to which each "
+                 "additional node is preferentially attached; \nThe number of time steps;\nThe number of "
+                 "simulations;\n the number of subjects that are aware of the information (infected) at time 0 \nIt "
+                 "will return several graphs representing the diffusion of an information (contagion throughout "
+                 "randomly generated network.) \nDo you want to proceed?"
+                 "\n/Yes_I_want_to_proceed_with_parameter_analysis"
+                 "\n/Go_back_to_menu")
+
+
+@bot.message_handler(
+    commands=['Yes_I_want_to_proceed_with_parameter_analysis', 'Yes_I_want_to_restart_the_parameter_analysis'])
+def handle_text(message):
+    del data[:]
+    cid = message.chat.id
+    msgValuenodes2 = bot.send_message(cid, 'How many nodes does the network have?')
+    bot.register_next_step_handler(msgValuenodes2, step_Set_Valuenodes2)
+
+
+def step_Set_Valuenodes2(message):
+    userValuenodes2 = message.text
+    if userValuenodes2.isnumeric() == True:
+        print(userValuenodes2)
+        msgValuek2 = bot.send_message(message.chat.id,
+                                      'The network will have {} nodes. \nWhat is the value of k? (suggested, between 2 and 15)'.format(
+                                          userValuenodes2))
+        bot.register_next_step_handler(msgValuek2, step_Set_Valuek2)
+        data.append(int(userValuenodes2))
+    else:
+        bot.send_message(message.chat.id,
+                         "The input is not valid. Utilize only integer numbers. The process is being interrupted. Do you want"
+                         " to restart the process"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis"
+                         "\n No, /Go_back_to_menu")
+
+
+def step_Set_Valuek2(message):
+    userValuek2 = message.text
+    if userValuek2.isnumeric() == True:
+        if 1 < int(userValuek2) < data[0]:
+            if int(userValuek2) < 15:
+                print(userValuek2)
+                msgValuesteps2 = bot.send_message(message.chat.id,
+                                                  'The parameter k will have a value of {}. \nHow many steps do we want in each simulation?'.format(
+                                                      userValuek2))
+                bot.register_next_step_handler(msgValuesteps2, step_Set_Valuesteps2)
+                data.append(int(userValuek2))
+        else:
+            bot.send_message(message.chat.id,
+                             "Attention! The parameter k has to be lower than the number of nodes and higher than 1."
+                             " The process is being interrupted. Do you want to restart the process?"
+                             "\n/Yes_I_want_to_restart_the_parameter_analysis"
+                             "\n No, /Go_back_to_menu")
+
+    else:
+        bot.send_message(message.chat.id,
+                         "Utilize only integer numbers. The process is being interrupted. Do you want"
+                         " to restart the process?"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis"
+                         "\n No, /Go_back_to_menu")
+
+
+def step_Set_Valuesteps2(message):
+    userValuesteps2 = message.text
+    if userValuesteps2.isnumeric() == True:
+        print(userValuesteps2)
+        msgValuesimulations2 = bot.send_message(message.chat.id,
+                                                'The number of steps for each simulation will be {}.'
+                                                '\nHow many times do you want to repeat the simulations?'.format(
+                                                    userValuesteps2))
+        bot.register_next_step_handler(msgValuesimulations2, step_Set_Valuesimulations2)
+        data.append(int(userValuesteps2))
+
+    else:
+        bot.send_message(message.chat.id,
+                         "Utilize only integer numbers. The process is being interrupted. Do you want"
+                         " to restart the process?"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis"
+                         "\n No, /Go_back_to_menu")
+
+
+def step_Set_Valuesimulations2(message):
+    userValuesimulations2 = message.text
+    if userValuesimulations2.isnumeric():
+        print(userValuesimulations2)
+        msgValueprime2 = bot.send_message(message.chat.id,
+                                          "{} simulations will be carried out. \nWhat is the value of the adoption threshold (between 0 and 1)? ".format(
+                                              userValuesimulations2))
+        data.append(int(userValuesimulations2))
+        bot.register_next_step_handler(msgValueprime2, step_set_Valuethreshold2)
+    else:
+        bot.send_message(message.chat.id,
+                         "Utilize only integer numbers. The process is being interrupted. Do you want"
+                         " to restart the process?"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis_fixed"
+                         "\n No, /Go_back_to_menu")
+
+
+def step_set_Valuethreshold2(message):
+    userValuethreshold2 = message.text
+    if checknumber.check(userValuethreshold2):
+        print(userValuethreshold2)
+        msgValuethreshold2=bot.send_message(message.chat.id, 'The value of the threshold will be {}.  \nHow many '
+                                                                  'subjects are aware of the information at time 0?'.format(userValuethreshold2))
+        data.append(float(userValuethreshold2))
+        bot.register_next_step_handler(msgValuethreshold2,step_set_Valueprime2)
+    else:
+        bot.send_message(message.chat.id,
+                         "Utilize only integer numbers. The process is being interrupted. Do you want"
+                         " to restart the process?"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis_fixed"
+                         "\n No, /Go_back_to_menu")
+
+
+def step_set_Valueprime2(message):
+    userValueprime2 = message.text
+    if userValueprime2.isnumeric() == True:
+        print(userValueprime2)
+        bot.send_message(message.chat.id,
+                         "{} people will be aware of the information at time t=0.".format(userValueprime2))
+        data.append(int(userValueprime2))
+        message_confirmation2 = bot.send_message(message.chat.id,
+                                                 "Summarizing. \nYou want to carry out {} simulations, each of which composed by {} time steps"
+                                                 " regarding the Bass, the DeGroot and the Piccione-Tolotti models on a network of {} nodes built with a k of value {}."
+                                                 "\nAt time 0, {} will be aware of the information"
+                                                 "\nDo you confirm?"
+                                                 "\n/Yes"
+                                                 "\n/Go_back (click twice)"
+                                                 "\n/Go_back_to_menu (click twice)".format(data[3], data[2], data[0],
+                                                                                           data[1], data[4]))
+        bot.register_next_step_handler(message_confirmation2, carryiton2)
+
+
+    else:
+        bot.send_message(message.chat.id,
+                         "Utilize only integer numbers. The process is being interrupted. Do you want"
+                         " to restart the process?"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis"
+                         "\n No, /Go_back_to_menu")
+
+
+def carryiton2(message):
+    if '/Yes' in message.text.split():
+        bot.send_message(message.chat.id, "Perfect! The process has been initiated! You will soon receive updates"
+                                          " regarding the prosecution of the analyses. Please, for the time remaining,"
+                                          " do not write anything")
+        bott = tb('2125748147:AAHiKWSFJ7vXqFBPLu0qjNYHPuFt1zL3uqo', message.chat.id)
+
+        iters = data[3]
+        steps = data[2]
+        par = data[1]
+        num = data[0]
+        thr = data[4]
+        primini = data[5]
+        m = 0
+
+        p = par
+
+        def tutto():
+            F = nx.random_tree(n=num, create_using=nx.DiGraph, )
+            G = nx.barabasi_albert_graph(num, p)
+            nx.set_node_attributes(G, 0, name='relevance')
+            primi = random.sample(range(0, num), primini)
+            for n in primi:
+                G.nodes[n]['relevance'] = 1
+
+            def combine(arr, s):
+                return list(combinations(arr, s))
+
+            def Control_Centrality(F):
+                length = len(F.nodes)
+                i = 1
+
+                def CC(F):
+                    pippa = F.out_degree()
+                    pippa1 = np.array(pippa)
+                    pippa2 = pippa1[pippa1[:, 1] != 0]
+                    F = F.subgraph(pippa2[:, 0])
+                    return F
+
+                def layer(F):
+                    culo = [x for x in F.nodes if x not in CC(F).nodes]
+                    banana = [i] * len(culo)
+                    results = np.column_stack((culo, banana))
+                    return results
+
+                results = layer(F)
+                while len(results) < length:
+                    results = np.concatenate([results, layer(F)])
+                    results = np.unique(results, axis=0)
+                    i += 1
+                    F = CC(F)
+                    layer(F)
+                return dict(zip(results[:, 0], (results[:, 1])))
+
+            BC = nx.betweenness_centrality(F)
+
+            isinstance(BC, dict)
+            list(G.nodes)
+
+            lll = combinations(G.nodes(), 2)
+            lll = np.matrix(list(lll))
+            cliques = list(nx.enumerate_all_cliques(G))
+            triads = [i for i in cliques if len(i) == 3]
+            simm = []
+            for n in triads:
+                for l in combine(n, 2):
+                    simm.append(l)
+
+            simmelian = []
+            for i in simm:
+                if i not in simmelian:
+                    simmelian.append(i)
+
+            simmelian = np.array(simmelian)
+
+            A = simmelian[:, 0]
+            B = simmelian[:, 1]
+            A1 = lll[:, 0]
+            B1 = lll[:, 1]
+            df = pd.DataFrame(simmelian)
+            numsimm = len(simmelian)
+
+            BCA = []
+            for x in A:
+                for n in BC:
+                    if x == n:
+                        BCA.append(BC[n])
+            BCB = []
+            for y in B:
+                for n in BC:
+                    if y == n:
+                        BCB.append(BC[n])
+
+            df['BCA'] = BCA
+            df['BCB'] = BCB
+            df['AVG'] = (df['BCA'] + df['BCB']) / 2
+            df['VAR'] = (((df['BCA'] - df['AVG']) ** 2 + (df['BCB'] - df['AVG']) ** 2) / 2)
+            VAR = np.sum(df['VAR'])
+            V = VAR / numsimm
+            df1 = df[3:4]
+            dff = []
+            for k in G.nodes:
+                for n in BC:
+                    if k == n:
+                        dff.append(BC[n])
+            T = max(dff)
+
+            H = pd.DataFrame(dff)
+            H['BCMax'] = T
+            H.rename(columns={0: 'BCentrality'}, inplace=True)
+            H['Hier'] = (H['BCMax'] - H['BCentrality'])
+            Q = np.mean(H['Hier'])
+            v = Q * V
+
+            BC1 = nx.betweenness_centrality(F)
+            isinstance(BC1, dict)
+            df1 = pd.DataFrame(lll)
+            BC1A = []
+            for x in A1:
+                for n in BC1:
+                    if x == n:
+                        BC1A.append(BC1[n])
+            BC1B = []
+            for y in B1:
+                for n in BC1:
+                    if y == n:
+                        BC1B.append(BC1[n])
+            df1['BC1A'] = BC1A
+            df1['BC1B'] = BC1B
+            df1['AVG1'] = (df1['BC1A'] + df1['BC1B']) / 2
+            df1['VAR1'] = ((df1['BC1A'] - df1['AVG1']) ** 2 + (df1['BC1B'] - df1['AVG1']) ** 2) / 2
+            V1 = np.mean(df1['VAR1'])
+            dff1 = []
+            for k in G.nodes:
+                for n in BC1:
+                    if k == n:
+                        dff1.append(BC1[n])
+            T1 = max(dff1)
+            H1 = pd.DataFrame(dff1)
+            H1['BC1Max'] = T1
+            H1.rename(columns={0: 'BCentrality1'}, inplace=True)
+            H1['Hier1'] = (H1['BC1Max'] - H1['BCentrality1'])
+            Vl = V / V1
+            nx.set_edge_attributes(G, 0, name='imitation')
+            for n in G.nodes:
+                G.nodes[n]['imitation'] = randrange(1, 10) / 100
+
+            sup = []
+            for (i, j) in F.edges:
+                sup.append((j, i))
+
+            sub = F.edges
+
+            nx.set_edge_attributes(G, 0, name='theta')
+            for n in G.nodes:
+                G.nodes[n]['theta'] = randrange(1, 10) / 500
+            nx.set_edge_attributes(G, 0, name='ego')
+            for n in G.nodes:
+                G.nodes[n]['ego'] = randrange(4, 9) / 10
+
+            def modelling(meansup, meansequal, meansdown, meannup, meannequal, meanndown, sigmas, sigman,
+                          ):
+                """
+                sup is when the information is going upward, down when it goes downward. if the information is going
+                upword, it means that subject i is the superior
+
+
+                for mean 0.8 is max and 0.2 minimum
+                for sigma 0.05 is max and 0.01 is minimum
+                """
+                influence_matrix = np.matrix(np.zeros((num, num)))
+                for i in G.nodes:
+                    for j in G.nodes:
+                        if i != j:
+                            if j in G.neighbors(i):
+                                if BC[i] - BC[j] < 0:
+                                    influence_matrix[i, j] = np.random.normal(meanndown, sigman) / len(
+                                        list(G.neighbors(i)))
+                                elif BC[i] - BC[j] > 0:
+                                    influence_matrix[i, j] = np.random.normal(meannup, sigman) / len(
+                                        list(G.neighbors(i)))
+                                elif BC[i] - BC[j] == 0:
+                                    influence_matrix[i, j] = np.random.normal(meannequal, sigman) / len(
+                                        list(G.neighbors(i)))
+                        if influence_matrix[i, j] < 0:
+                            influence_matrix[i, j] = 0
+                        elif influence_matrix[i, j] > 1:
+                            influence_matrix[i, j] = 1
+                    influence_matrix[i, i] = (1 - influence_matrix[[i]].sum(axis=1))
+
+                probability_matrix = np.matrix(np.zeros((num, num)))
+                for i in G.nodes:
+                    for j in G.nodes:
+                        if i == j:
+                            probability_matrix[i, j] = 1
+                        elif i != j:
+                            if [i, j] in simmelian:
+                                if BC[i] - BC[j] > 0:
+                                    probability_matrix[i, j] = np.random.normal(meansup, sigmas)
+                                elif BC[i] - BC[j] < 0:
+                                    probability_matrix[i, j] = np.random.normal(meansdown, sigmas)
+                                elif BC[i] - BC[j] == 0:
+                                    probability_matrix[i, j] = np.random.normal(meansequal, sigmas)
+                            elif [i, j] not in simmelian:
+                                if BC[i] - BC[j] > 0:
+                                    probability_matrix[i, j] = np.random.normal(meannup, sigman)
+                                elif BC[i] - BC[j] < 0:
+                                    probability_matrix[i, j] = np.random.normal(meanndown, sigman)
+                                elif BC[i] - BC[j] == 0:
+                                    probability_matrix[i, j] = np.random.normal(meannequal, sigman)
+                        if probability_matrix[i, j] < 0:
+                            probability_matrix[i, j] = 0
+                        elif probability_matrix[i, j] > 1:
+                            probability_matrix[i, j] = 1
+
+                nx.set_edge_attributes(G, 0, name='threshold')
+                for n in G.nodes:
+                    G.nodes[n]['threshold'] = thr
+
+                K = G.copy()
+                t = 0
+                bellini = []
+
+                def event():
+                    P = K.copy()
+                    for i in K.nodes:
+                        opchange = [P.nodes[i]['relevance'] * influence_matrix[i, i]]
+                        for j in K.neighbors(i):
+                            if P.nodes[j]['relevance'] >= P.nodes[j]['threshold']:
+                                if random.random() < probability_matrix[i, j]:
+                                    opchange.append(influence_matrix[i, j] * P.nodes[j]['relevance'])
+                                else:
+                                    opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
+                            if P.nodes[j]['relevance'] < P.nodes[j]['threshold']:
+                                opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
+                        K.nodes[i]["relevance"] = np.sum(opchange)
+                        if K.nodes[i]["relevance"] > 1:
+                            K.nodes[i]["relevance"] = 1
+
+                    return K
+
+                dati = [Vl, (primini / num)]
+                datelli = [(primini / num)]
+                datini = [0]
+                while t != steps:
+
+                    event()
+                    P = []
+                    P2 = []
+                    for n in K.nodes:
+                        if K.nodes[n]['relevance'] >= K.nodes[n]['threshold']:
+                            P.append(K.nodes[n]['relevance'])
+                            if n not in bellini:
+                                bellini.append(n)
+                        P2.append(K.nodes[n]['relevance'])
+                    dati.append((len(P) / num))
+                    datelli.append((len(bellini) / num))
+                    datini.append(np.mean(P2))
+                    t += 1
+
+                return [dati, datelli, datini]
+
+            """
+                    sup is when the information is going upward, down when it goes downward. if the information is going
+                    upword, it means that subject i is the superior
+
+
+                    for mean 0.8 is max and 0.2 minimum
+                    for sigma 0.05 is max and 0.01 is minimum
+                    """
+
+            return [modelling(meansup=1, meansequal=1, meansdown=1, meannup=1, meannequal=1, meanndown=1,
+                              sigmas=0, sigman=0),
+                    modelling(meansup=1, meansequal=1, meansdown=1, meannup=1, meannequal=1, meanndown=1,
+                              sigmas=0, sigman=0),
+                    modelling(meansup=0.0, meansequal=0.4, meansdown=0.6, meannup=0.2, meannequal=0.4, meanndown=0.6,
+
+                              sigmas=0, sigman=0),
+                    modelling(meansup=0.1, meansequal=0.2, meansdown=0.3, meannup=0.2, meannequal=0.4, meanndown=0.6,
+                              sigmas=0.01, sigman=0.05),
+                    modelling(meansup=0.1, meansequal=0.2, meansdown=0.3, meannup=0.2, meannequal=0.4, meanndown=0.6,
+                              sigmas=0.01, sigman=0.05), Vl]
+
+        """
+        the first one is with no thresholod
+        the second one is with average threshold
+        the third one includes differences between levels
+        the fourth one considers divergencies between simmelian and non simmelian
+        """
+
+        DATONIA = []
+        DATONIB = []
+        DATONIC = []
+        DATONID = []
+        DATONIE = []
+        DATONIphi = []
+        cumulativeA = []
+        cumulativeB = []
+        cumulativeC = []
+        cumulativeD = []
+        cumulativeE = []
+        opinionA = []
+        opinionB = []
+        opinionC = []
+        opinionD = []
+        opinionE = []
+
+        startTime = time.time()
+
+        while m != iters:
+            banana = tutto()
+            executiontime = (time.time() - startTime)
+            ETA = int((((executiontime / (m + 1)) * (iters - m))) / 60)
+            print(int((m / iters) * 100), '% Estimated time remaining:',
+                  ETA,
+                  'minutes')
+            if m == steps / 10:
+                bot.send_message(message.chat.id, 'Hi! 'u'\U0001F916 just to let you know that the analysis has been'
+                                                  ' set properly! 10% of the process has been carried out!'
+                                                  '\nEstimated time remaining: {} minutes'.format(ETA))
+            elif m == steps / 2:
+                bot.send_message(message.chat.id, 'Hi! 'u'\U0001F916 just to let you know that we are half-way done!'
+                                                  '\nEstimated time remaining: {} minutes'.format(ETA))
+            elif m == steps * 0.9:
+                bot.send_message(message.chat.id, 'Hi! 'u'\U0001F916 just to let you know that we are nearly done!'
+                                                  '\n90% of the process has been carried out!'
+                                                  '\nEstimated time remaining: {} minutes'.format(ETA))
+            m += 1
+            print(int((m / iters) * 100), '% Estimated time remaining:',
+                  int((((executiontime / (m)) * (iters - m))) / 60),
+                  'minutes')
+            DATONIA.append(banana[0][0])
+            DATONIB.append(banana[1][0])
+            DATONIC.append(banana[2][0])
+            DATONID.append(banana[3][0])
+            DATONIE.append(banana[4][0])
+            DATONIphi.append(banana[5])
+            cumulativeA.append((banana[0][1]))
+            cumulativeB.append((banana[1][1]))
+            cumulativeC.append((banana[2][1]))
+            cumulativeD.append((banana[3][1]))
+            cumulativeE.append((banana[4][1]))
+            opinionA.append((banana[0][2]))
+            opinionB.append((banana[1][2]))
+            opinionC.append((banana[2][2]))
+            opinionD.append((banana[3][2]))
+            opinionE.append((banana[4][2]))
+
+        dat = np.array(DATONIA)
+        for n in dat:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 1: Every parameter is fixed')
+        plt.xlabel('Time steps')
+        plt.ylabel('Actual adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+        datcumulativeA = np.array(cumulativeA)
+        for n in datcumulativeA:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 1: Every parameter is fixed')
+        plt.xlabel('Time steps')
+        plt.ylabel('Cumulative adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+        datopinionA = np.array(opinionA)
+        for n in datopinionA:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 1: Every parameter is fixed')
+        plt.xlabel('Time steps')
+        plt.ylabel('Average Opinion')
+        bott.send_plot(plt)
+        plt.cla()
+        lstDATONIA = []
+        n = len(tutto()[1][0])
+        for i in range(n + 0):
+            lstDATONIA.append(i)
+        minimo = []
+        massimo = []
+        media = []
+        mediana = []
+        for l in np.array(lstDATONIA):
+            minimo.append(dat[:, l].min())
+            massimo.append(dat[:, l].max())
+            media.append(dat[:, l].mean())
+            mediana.append(np.median(dat[:, l], axis=0))
+        plt.plot(minimo[1:], label='minimum')
+        plt.plot(massimo[1:], label='maximum')
+        plt.plot(media[1:], label='mean')
+        plt.plot(mediana[1:], 'r--', label='median')
+        plt.legend()
+        plt.title('step 1: Every parameter is fixed')
+        plt.xlabel('Time steps')
+        plt.ylabel('Actual adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+
+        dat = np.array(DATONIB)
+        for n in dat:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 2: a (random) threshold is assigned')
+        plt.xlabel('Time steps')
+        plt.ylabel('Actual adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+        datcumulativeB = np.array(cumulativeB)
+        for n in datcumulativeB:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 2: a (random) threshold is assigned')
+        plt.xlabel('Time steps')
+        plt.ylabel('Cumulative adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+        datopinionB = np.array(opinionB)
+        for n in datopinionB:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 2: a (random) threshold is assigned')
+        plt.xlabel('Time steps')
+        plt.ylabel('Average Opinion')
+        bott.send_plot(plt)
+        plt.cla()
+        lstDATONIB = []
+        n = len(tutto()[1][0])
+        for i in range(n + 0):
+            lstDATONIB.append(i)
+        minimo = []
+        massimo = []
+        media = []
+        mediana = []
+        for l in np.array(lstDATONIB):
+            minimo.append(dat[:, l].min())
+            massimo.append(dat[:, l].max())
+            media.append(dat[:, l].mean())
+            mediana.append(np.median(dat[:, l], axis=0))
+        plt.plot(minimo[1:], label='minimum')
+        plt.plot(massimo[1:], label='maximum')
+        plt.plot(media[1:], label='mean')
+        plt.plot(mediana[1:], 'r--', label='median')
+        plt.legend()
+        plt.title('step 2: a (random) threshold is assigned')
+        plt.xlabel('Time steps')
+        plt.ylabel('Actual adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+
+        dat = np.array(DATONIC)
+        for n in dat:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 3: introducing differences between levels')
+        plt.xlabel('Time steps')
+        plt.ylabel('Actual adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+        datcumulativeC = np.array(cumulativeC)
+        for n in datcumulativeC:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 3: introducing differences between levels')
+        plt.xlabel('Time steps')
+        plt.ylabel('Cumulative adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+        datopinionC = np.array(opinionC)
+        for n in datopinionC:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 3: introducing differences between levels')
+        plt.xlabel('Time steps')
+        plt.ylabel('Average Opinion')
+        bott.send_plot(plt)
+        plt.cla()
+        lstDATONIC = []
+        n = len(tutto()[1][0])
+        for i in range(n + 0):
+            lstDATONIC.append(i)
+        minimo = []
+        massimo = []
+        media = []
+        mediana = []
+        for l in np.array(lstDATONIC):
+            minimo.append(dat[:, l].min())
+            massimo.append(dat[:, l].max())
+            media.append(dat[:, l].mean())
+            mediana.append(np.median(dat[:, l], axis=0))
+        plt.plot(minimo[1:], label='minimum')
+        plt.plot(massimo[1:], label='maximum')
+        plt.plot(media[1:], label='mean')
+        plt.plot(mediana[1:], 'r--', label='median')
+        plt.legend()
+        plt.title('step 3: introducing differences between levels')
+        plt.xlabel('Time steps')
+        plt.ylabel('Actual adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+
+        dat = np.array(DATONID)
+        for n in dat:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 4: introducing differences between Simmelian and non simmelian (sigma)')
+        plt.xlabel('Time steps')
+        plt.ylabel('Actual adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+        datcumulativeD = np.array(cumulativeD)
+        for n in datcumulativeD:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 4: introducing differences between Simmelian and non simmelian (sigma)')
+        plt.xlabel('Time steps')
+        plt.ylabel('Cumulative adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+        datopinionD = np.array(opinionD)
+        for n in datopinionD:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 4: introducing differences between Simmelian and non simmelian (sigma)')
+        plt.xlabel('Time steps')
+        plt.ylabel('Average Opinion')
+        bott.send_plot(plt)
+        plt.cla()
+        lstDATONID = []
+        n = len(tutto()[1][0])
+        for i in range(n + 0):
+            lstDATONID.append(i)
+        minimo = []
+        massimo = []
+        media = []
+        mediana = []
+        for l in np.array(lstDATONID):
+            minimo.append(dat[:, l].min())
+            massimo.append(dat[:, l].max())
+            media.append(dat[:, l].mean())
+            mediana.append(np.median(dat[:, l], axis=0))
+        plt.plot(minimo[1:], label='minimum')
+        plt.plot(massimo[1:], label='maximum')
+        plt.plot(media[1:], label='mean')
+        plt.plot(mediana[1:], 'r--', label='median')
+        plt.legend()
+        plt.title('step 4: introducing differences between Simmelian and non simmelian (sigma)')
+        plt.xlabel('Time steps')
+        plt.ylabel('Actual adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+
+        dat = np.array(DATONIE)
+        for n in dat:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 5: introducing differences between Simmelian and non simmelian (sigma and mean)')
+        plt.xlabel('Time steps')
+        plt.ylabel('Actual adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+        datcumulativeE = np.array(cumulativeE)
+        for n in datcumulativeE:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 5: introducing differences between Simmelian and non simmelian (sigma and mean)')
+        plt.xlabel('Time steps')
+        plt.ylabel('Cumulative adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+        datopinionE = np.array(opinionE)
+        for n in datopinionE:
+            if n[0] < 1:
+                plt.plot(n[1:], 'k', alpha=0.1, label='Non-heterarchical')
+            if n[0] > 1:
+                plt.plot(n[1:], 'r', alpha=0.1, label='Heterarchical')
+        plt.title('step 5: introducing differences between Simmelian and non simmelian (sigma and mean')
+        plt.xlabel('Time steps')
+        plt.ylabel('Average Opinion')
+        bott.send_plot(plt)
+        plt.cla()
+        lstDATONIE = []
+        n = len(tutto()[1][0])
+        for i in range(n + 0):
+            lstDATONIE.append(i)
+        minimo = []
+        massimo = []
+        media = []
+        mediana = []
+        for l in np.array(lstDATONIE):
+            minimo.append(dat[:, l].min())
+            massimo.append(dat[:, l].max())
+            media.append(dat[:, l].mean())
+            mediana.append(np.median(dat[:, l], axis=0))
+        plt.plot(minimo[1:], label='minimum')
+        plt.plot(massimo[1:], label='maximum')
+        plt.plot(media[1:], label='mean')
+        plt.plot(mediana[1:], 'r--', label='median')
+        plt.legend()
+        plt.title('step 5: introducing differences between Simmelian and non simmelian (sigma and mean)')
+        plt.xlabel('Time steps')
+        plt.ylabel('Actual adoption rate')
+        bott.send_plot(plt)
+        plt.cla()
+        msgreplay2 = bot.send_message(message.chat.id,'Do you want to repeat the analysis with the same '
+                                                             'parameters?  \n/Yes\nNo, /Go_back_to_menu')
+        bot.register_next_step_handler(msgreplay2,carryiton2)
+
+
+@bot.message_handler(commands=['Opinion_dynamics', 'Go_back_to_opinion_dynamics'])
+def greet(message):
+    bot.reply_to(message,
+                 "Excellent choice, dear. This type of analysis will execute the DeGroot (1969) model randomly generated"
+                 "networks (Barabasi random graph). Differently from the traditional DeGroot model, we make the trust "
+                 "matrix and the probability of subject i to talk with a neighbour at a generic time step t to be "
+                 "dependent on the characteristics of the structure of the network. Before proceeding, we need to "
+                 "define the parameters necessary. "
+                 "For instance, we need to define:"
+                 "\nThe number of nodes on our network; \nThe k parameter, which is the number of nodes to which each "
+                 "additional node is preferentially attached; \nThe number of time steps; \nThe value of alpha of "
+                 "the beta distribution that describes the distribution of opinions at time 0;\nThe value of beta of "
+                 "the beta distribution that describes the distribution of opinions at time 0."
+                 "\nDo you want to proceed?"
+                 "\n/Yes_I_want_to_proceed_with_opinion_dynamics"
+                 "\n/Go_back_to_menu"
+                 "\n\nIn case you'd like to see how the beta distribution varies depending on the parameters you set, "
+                 "you can test it through /beta_distribution")
+
+
+@bot.message_handler(
+    commands=['beta_distribution', 'Yes_I_want_to_restart_beta_distribution'])
+def handle_text(message):
+    del data[:]
+    cid = message.chat.id
+    msgValuealpha = bot.send_message(cid, "Perfect! in this section you will be able to see how a beta distribution "
+                                          "varies depending on the alpha and beta parameter. First of all, "
+                                          "what is the value of alpha?")
+    bot.register_next_step_handler(msgValuealpha, step_Set_Valuealpha)
+
+
+def step_Set_Valuealpha(message):
+    userValuealpha = message.text
+    if checknumber.check(userValuealpha):
+        print(userValuealpha)
+        msgValuebeta = bot.send_message(message.chat.id,
+                                        'The value of alpha is equal to {} \nWhat is the value of beta?'.format(
+                                            userValuealpha))
+        bot.register_next_step_handler(msgValuebeta, step_Set_Valuebeta)
+        data.append(float(userValuealpha))
+    else:
+        bot.send_message(message.chat.id,
+                         "The input is not valid. Utilize only integer numbers. The process is being interrupted. Do "
+                         "you want to restart the process"
+                         "\n/Yes_I_want_to_restart_beta_distribution"
+                         "\n No, /Go_back_to_menu")
+
+
+def step_Set_Valuebeta(message):
+    userValuebeta = message.text
+    if checknumber.check(userValuebeta):
+        print(userValuebeta)
+        msgconfirmation = bot.send_message(message.chat.id,
+                                           'The value of beta is equal to {}. \nDo you want to proceed?'
+                                           '\n/Yes \nNo, /Go_back_to_menu'.format(
+                                               userValuebeta))
+        bot.register_next_step_handler(msgconfirmation, carryiton_betadistribution)
+        data.append(float(userValuebeta))
+    else:
+        bot.send_message(message.chat.id, "The input is not valid. Utilize only integer numbers. The process is being "
+                                          "interrupted. Do you want to restart the process"
+                                          "\n/Yes_I_want_to_restart_beta_distribution"
+                                          "\n No, /Go_back_to_menu")
+
+
+def carryiton_betadistribution(message):
+    if '/Yes' in message.text.split():
+        bot.send_message(message.chat.id, "Perfect! Here is the representation of the beta distribution with alpha = "
+                                          "{} and beta = {}.".format(data[0], data[1]))
+        bott = tb('2125748147:AAHiKWSFJ7vXqFBPLu0qjNYHPuFt1zL3uqo', message.chat.id)
+
+        Q=[]
+        for n in range(0,1000000):
+            Q.append(np.random.beta(data[0], data[1]))
+
+        plt.hist(Q, bins=1000)
+        bott.send_plot(plt)
+        plt.cla()
+        bot.send_message(message.chat.id, "Do you want to repeat it? \n/Yes_I_want_to_restart_beta_distribution"
+                                          "\n No, /Go_back_to_menu")
+
+
+
+
+@bot.message_handler(
+    commands=['Yes_I_want_to_proceed_with_opinion_dynamics', 'Yes_I_want_to_restart_opinion_dynamics'])
+def handle_text(message):
+    del data[:]
+    cid = message.chat.id
+    msgValuenodesdynamics = bot.send_message(cid, 'How many nodes does the network have?')
+    bot.register_next_step_handler(msgValuenodesdynamics, step_Set_Valuenodesdynamics)
+
+
+def step_Set_Valuenodesdynamics(message):
+    userValuenodesdynamics = message.text
+    if userValuenodesdynamics.isnumeric() == True:
+        print(userValuenodesdynamics)
+        msgValuekdynamics = bot.send_message(message.chat.id,
+                                             'The network will have {} nodes. \nWhat is the value of k? (suggested, between 1 '
+                                             'and 15)'.format(
+                                                 userValuenodesdynamics))
+        bot.register_next_step_handler(msgValuekdynamics, step_Set_Valuekdynamics)
+        data.append(int(userValuenodesdynamics))
+    else:
+        bot.send_message(message.chat.id,
+                         "The input is not valid. Utilize only integer numbers. The process is being interrupted. Do "
+                         "you want "
+                         " to restart the process"
+                         "\n/Yes_I_want_to_restart_opinion_dynamics"
+                         "\n No, /Go_back_to_menu")
+
+
+def step_Set_Valuekdynamics(message):
+    userValuekdynamics = message.text
+    if userValuekdynamics.isnumeric() == True:
+        if 0 < int(userValuekdynamics) < data[0]:
+            if int(userValuekdynamics) < 15:
+                print(userValuekdynamics)
+                msgValuestepsdynamics = bot.send_message(message.chat.id,
+                                                         'The parameter k will have a value of {}. \nHow many steps do we '
+                                                         'want in each simulation?'.format(
+                                                             userValuekdynamics))
+                bot.register_next_step_handler(msgValuestepsdynamics, step_Set_Valuestepsdynamics)
+                data.append(int(userValuekdynamics))
+        else:
+            bot.send_message(message.chat.id,
+                             "Attention! The parameter k has to be lower than the number of nodes and higher than 1."
+                             " The process is being interrupted. Do you want to restart the process?"
+                             "\n/Yes_I_want_to_restart_opinion_dynamics"
+                             "\n No, /Go_back_to_menu")
+
+    else:
+        bot.send_message(message.chat.id,
+                         "Utilize only integer numbers. The process is being interrupted. Do you want"
+                         " to restart the process?"
+                         "\n/Yes_I_want_to_restart_opinion_dynamics"
+                         "\n No, /Go_back_to_menu")
+
+
+def step_Set_Valuestepsdynamics(message):
+    userValuestepsdynamics = message.text
+    if userValuestepsdynamics.isnumeric() == True:
+        print(userValuestepsdynamics)
+        msgValuesimulationsdynamics = bot.send_message(message.chat.id, 'The number of steps for the simulation will '
+                                                                        'be {}.\nWhat is the value of alpha of the '
+                                                                        'beta distribution that describes the '
+                                                                        'distribution of opinions at time 0?'.format(
+            userValuestepsdynamics))
+        bot.register_next_step_handler(msgValuesimulationsdynamics, step_Set_Valuealphadynamics)
+        data.append(int(userValuestepsdynamics))
+
+    else:
+        bot.send_message(message.chat.id, "Utilize only integer numbers. The process is being interrupted. Do you want"
+                                          " to restart the process?"
+                                          "\n/Yes_I_want_to_restart_opinion_dynamics"
+                                          "\n No, /Go_back_to_menu")
+
+
+def step_Set_Valuealphadynamics(message):
+    userValuealphaynamics = message.text
+    if checknumber.check(userValuealphaynamics) == True:
+        print(userValuealphaynamics)
+        bot.send_message(message.chat.id, "The value of alpha of the beta distribution that describes the distribution of opinions at time 0 is {}.".format(userValuealphaynamics))
+        data.append(float(userValuealphaynamics))
+        msgValueprimedynamics = bot.send_message(message.chat.id, "What is the value of beta of the beta "
+                                                                  "distribution that describes the distribution of "
+                                                                  "opinions at time 0?")
+        bot.register_next_step_handler(msgValueprimedynamics, step_set_Valuebetadynamics)
+
+
+def step_set_Valuebetadynamics(message):
+    userValuebetadynamics = message.text
+    if checknumber.check(userValuebetadynamics):
+        print(userValuebetadynamics)
+        data.append(float(userValuebetadynamics))
+        bot.send_message(message.chat.id,
+                         "The value of beta of the beta distribution that describes the distribution of opinions at time 0 is {}.".format(userValuebetadynamics))
+        msg_threshold = bot.send_message(message.chat.id,
+                                                        "What is the value of the adoption threshold? (between 0 and 1)")
+        bot.register_next_step_handler(msg_threshold, step_set_Valuethresholddynamics)
+    else:
+        bot.send_message(message.chat.id, "Utilize only integer numbers. The process is being interrupted. Do you want"
+                                          " to restart the process?"
+                                          "\n/Yes_I_want_to_restart_opinion_dynamics"
+                                          "\n No, /Go_back_to_menu")
+
+def step_set_Valuethresholddynamics(message):
+    userValuethresholddynamics = message.text
+    if checknumber.check(userValuethresholddynamics):
+        print(userValuethresholddynamics)
+        data.append(float(userValuethresholddynamics))
+        bot.send_message(message.chat.id,
+                         "The value of the adoption threshold is {}.".format(
+                             userValuethresholddynamics))
+        msg_threshold = bot.send_message(message.chat.id,
+                                         "How many stubborn agents there are in the sample?")
+        bot.register_next_step_handler(msg_threshold,step_set_Valuestubborndynamics)
+
+    else:
+        bot.send_message(message.chat.id, "Utilize only integer numbers. The process is being interrupted. Do you want"
+                                      " to restart the process?"
+                                      "\n/Yes_I_want_to_restart_opinion_dynamics"
+                                      "\n No, /Go_back_to_menu")
+
+
+def step_set_Valuestubborndynamics(message):
+    userValuestubborndynamics = message.text
+    if checknumber.check(userValuestubborndynamics):
+        print(userValuestubborndynamics)
+        data.append(int(userValuestubborndynamics))
+        msg_prime_dynamics = bot.send_message(message.chat.id,"The amount of stubborn agents is {}. How many people will be aware (infected) at time 0?".format(userValuestubborndynamics))
+        bot.register_next_step_handler(msg_prime_dynamics,step_Set_Valueprimedynamics)
+    else:
+        bot.send_message(message.chat.id,
+                         "Utilize only integer numbers. The process is being interrupted. Do you want"
+                         " to restart the process?"
+                         "\n/Yes_I_want_to_restart_the_parameter_analysis_fixed"
+                         "\n No, /Go_back_to_menu")
+
+
+
+def step_Set_Valueprimedynamics(message):
+    userValueprimedynamics = message.text
+    if userValueprimedynamics.isnumeric():
+        print(userValueprimedynamics)
+        data.append(int(userValueprimedynamics))
+        msg_confirmation = bot.send_message(message.chat.id,
+                                                        "Summarizing. \nYou want to carry out a simulation composed by {} "
+                                                        "time steps regarding the adapted the DeGroot model on a network "
+                                                        "composed by {} nodes built with a k of value{}. The alpha and beta "
+                                                        "of the beta distribution representing the initial opinion of the "
+                                                        "subjects are equal to, respectively, {} and {}. The adoption "
+                                                        "threshold has a value of {}. There are {} stubborn subject("
+                                                        "s). Eventually, at time =0, there will be {} subjects aware "
+                                                        "at time 0 "
+                                                        "\nDo you confirm?"
+                                                        "\n/Yes"
+                                                        "\n/Go_back (click twice)"
+                                                        "\n/Go_back_to_menu (click twice)".format(data[2], data[0],
+                                                                                                  data[1], data[3],
+                                                                                                  data[4], data[5],data[6],data[7]))
+        bot.register_next_step_handler(msg_confirmation, carryitondynamics)
+    else:
+        bot.send_message(message.chat.id, "Utilize only integer numbers. The process is being interrupted. Do you want"
+                                          " to restart the process?"
+                                          "\n/Yes_I_want_to_restart_opinion_dynamics"
+                                          "\n No, /Go_back_to_menu")
+
+
+def carryitondynamics(message):
+    if '/Yes' in message.text.split():
+        bot.send_message(message.chat.id, "Perfect! The process has been initiated! You will soon receive updates"
+                                          " regarding the prosecution of the analyses. Please, for the time remaining,"
+                                          " do not write anything")
+        bott = tb('2125748147:AAHiKWSFJ7vXqFBPLu0qjNYHPuFt1zL3uqo', message.chat.id)
+
+        steps = data[2]
+        par = data[1]
+        num = data[0]
+        thr = data[5]
+        stub = data[6]
+        primini = data[7]
+        p = par
+
+        F = nx.random_tree(n=num, create_using=nx.DiGraph, )
+        G = nx.barabasi_albert_graph(num, p)
+        nx.set_edge_attributes(G, 0, name='threshold')
+        for n in G.nodes:
+            G.nodes[n]['threshold'] = thr
+        datoni = []
+
+        def combine(arr, s):
+            return list(combinations(arr, s))
+
+        def Control_Centrality(F):
+            length = len(F.nodes)
+            i = 1
+
+            def CC(F):
+                pippa = F.out_degree()
+                pippa1 = np.array(pippa)
+                pippa2 = pippa1[pippa1[:, 1] != 0]
+                F = F.subgraph(pippa2[:, 0])
+                return F
+
+            def layer(F):
+                culo = [x for x in F.nodes if x not in CC(F).nodes]
+                banana = [i] * len(culo)
+                results = np.column_stack((culo, banana))
+                return results
+
+            results = layer(F)
+            while len(results) < length:
+                results = np.concatenate([results, layer(F)])
+                results = np.unique(results, axis=0)
+                i += 1
+                F = CC(F)
+                layer(F)
+            return dict(zip(results[:, 0], (results[:, 1])))
+
+        BC = nx.betweenness_centrality(F)
+
+        isinstance(BC, dict)
+        list(G.nodes)
+
+        lll = combinations(G.nodes(), 2)
+        lll = np.matrix(list(lll))
+        cliques = list(nx.enumerate_all_cliques(G))
+        triads = [i for i in cliques if len(i) == 3]
+        simm = []
+        for n in triads:
+            for l in combine(n, 2):
+                simm.append(l)
+
+        simmelian = []
+        for i in simm:
+            if i not in simmelian:
+                simmelian.append(i)
+
+        simmelian = np.array(simmelian)
+
+        A = simmelian[:, 0]
+        B = simmelian[:, 1]
+        A1 = lll[:, 0]
+        B1 = lll[:, 1]
+        df = pd.DataFrame(simmelian)
+        numsimm = len(simmelian)
+
+        BCA = []
+        for x in A:
+            for n in BC:
+                if x == n:
+                    BCA.append(BC[n])
+        BCB = []
+        for y in B:
+            for n in BC:
+                if y == n:
+                    BCB.append(BC[n])
+
+        df['BCA'] = BCA
+        df['BCB'] = BCB
+        df['AVG'] = (df['BCA'] + df['BCB']) / 2
+        df['VAR'] = (((df['BCA'] - df['AVG']) ** 2 + (df['BCB'] - df['AVG']) ** 2) / 2)
+        VAR = np.sum(df['VAR'])
+        V = VAR / numsimm
+        df1 = df[3:4]
+        dff = []
+        for k in G.nodes:
+            for n in BC:
+                if k == n:
+                    dff.append(BC[n])
+        T = max(dff)
+
+        H = pd.DataFrame(dff)
+        H['BCMax'] = T
+        H.rename(columns={0: 'BCentrality'}, inplace=True)
+        H['Hier'] = (H['BCMax'] - H['BCentrality'])
+        Q = np.mean(H['Hier'])
+        v = Q * V
+
+        BC1 = nx.betweenness_centrality(F)
+        isinstance(BC1, dict)
+        df1 = pd.DataFrame(lll)
+        BC1A = []
+        for x in A1:
+            for n in BC1:
+                if x == n:
+                    BC1A.append(BC1[n])
+        BC1B = []
+        for y in B1:
+            for n in BC1:
+                if y == n:
+                    BC1B.append(BC1[n])
+        df1['BC1A'] = BC1A
+        df1['BC1B'] = BC1B
+        df1['AVG1'] = (df1['BC1A'] + df1['BC1B']) / 2
+        df1['VAR1'] = ((df1['BC1A'] - df1['AVG1']) ** 2 + (df1['BC1B'] - df1['AVG1']) ** 2) / 2
+        V1 = np.mean(df1['VAR1'])
+        dff1 = []
+        for k in G.nodes:
+            for n in BC1:
+                if k == n:
+                    dff1.append(BC1[n])
+        T1 = max(dff1)
+        H1 = pd.DataFrame(dff1)
+        H1['BC1Max'] = T1
+        H1.rename(columns={0: 'BCentrality1'}, inplace=True)
+        H1['Hier1'] = (H1['BC1Max'] - H1['BCentrality1'])
+        Vl = V / V1
+        nx.set_edge_attributes(G, 0, name='imitation')
+        for n in G.nodes:
+            G.nodes[n]['imitation'] = randrange(1, 10) / 100
+
+        sup = []
+        for (i, j) in F.edges:
+            sup.append((j, i))
+
+        sub = F.edges
+
+        nx.set_edge_attributes(G, 0, name='theta')
+        for n in G.nodes:
+            G.nodes[n]['theta'] = randrange(1, 10) / 500
+        nx.set_edge_attributes(G, 0, name='ego')
+        for n in G.nodes:
+            G.nodes[n]['ego'] = randrange(4, 9) / 10
+        nx.set_node_attributes(G, 0, name='relevance')
+        for n in G.nodes:
+            G.nodes[n]['relevance'] = np.random.beta(data[3], data[4])
+        stubborn = random.sample(range(0, num), stub)
+        primi = random.sample(range(0, num), primini)
+
+        for n in primi:
+            G.nodes[n]['relevance'] = 1
+        for n in stubborn:
+            G.nodes[n]['relevance'] = randrange(0,100)/100
+
+        banana = random.sample(range(0, num), stub)
+        print(banana)
+
+        influence_matrix = np.matrix(np.zeros((num, num)))
+        for i in G.nodes:
+            for j in G.neighbors(i):
+                if i in stubborn:
+                    influence_matrix[i, j] = 0
+                else:
+                    if BC[i] - BC[j] < 0:
+                        influence_matrix[i, j] = (np.random.beta(1, 8) / len(list(G.neighbors(i))))
+                    elif BC[i] - BC[j] > 0:
+                        influence_matrix[i, j] = np.random.beta(1, 2) / len(list(G.neighbors(i)))
+                    elif BC[i] - BC[j] == 0:
+                        influence_matrix[i, j] = np.random.beta(4, 3) / len(list(G.neighbors(i)))
+            influence_matrix[i, i] = (1 - influence_matrix[[i]].sum(axis=1))
+
+
+
+        probability_matrix = np.matrix(np.zeros((num, num)))
+        for i in G.nodes:
+            for j in G.neighbors(i):
+                if i == j:
+                    probability_matrix[i, j] = 1
+                elif i != j:
+                    if [i, j] in simmelian:
+                        if BC[i] - BC[j] > 0:
+                            probability_matrix[i, j] = np.random.beta(8, 3)
+                        elif BC[i] - BC[j] < 0:
+                            probability_matrix[i, j] = np.random.beta(8, 2)
+                        elif BC[i] - BC[j] == 0:
+                            probability_matrix[i, j] = np.random.beta(8, 1)
+                    elif [i, j] not in simmelian:
+                        if BC[i] - BC[j] > 0:
+                            probability_matrix[i, j] = np.random.beta(8, 4)
+                        elif BC[i] - BC[j] < 0:
+                            probability_matrix[i, j] = np.random.beta(8, 4)
+                        elif BC[i] - BC[j] == 0:
+                            probability_matrix[i, j] = np.random.beta(8, 4)
+
+        bellini = []
+        def degrootmodified(G):
+            K = G.copy()
+            t = 0
+
+            def event():
+                P = K.copy()
+                for i in K.nodes:
+                    opchange = [P.nodes[i]['relevance'] * influence_matrix[i, i]]
+                    for j in K.neighbors(i):
+                        if P.nodes[j]['relevance'] >= P.nodes[j]['threshold']:
+                                opchange.append(influence_matrix[i, j] * P.nodes[j]['relevance'])
+                        elif P.nodes[j]['relevance'] < P.nodes[j]['threshold']:
+                            opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
+                    K.nodes[i]["relevance"] = np.sum(opchange)
+                    if K.nodes[i]["relevance"] > 1:
+                        K.nodes[i]["relevance"] = 1
+
+                return K
+            cristo = [(primini/num)]
+            while t != steps:
+                datelli = []
+                datini = []
+                t += 1
+                event()
+                for n in K.nodes:
+                    datelli.append(K.nodes[n]['relevance'])
+                    if K.nodes[n]['relevance'] > K.nodes[n]['threshold']:
+                        datini.append(n)
+                pd.DataFrame({'x': datelli})
+                datoni.append(datelli)
+                cristo.append(len(datini)/num)
+
+            plt.plot(datoni, 'k', alpha=0.1)
+            plt.plot(cristo, 'green',alpha=1)
+            plt.plot(np.mean(datoni,axis=1), 'r--', label='mean')
+            plt.plot(np.median(datoni,axis=1),'b', label='median')
+            plt.legend()
+            bott.send_plot(plt)
+            plt.cla()
+
+
+
+        def degrootmodifiedstoc(G):
+            K = G.copy()
+            t = 0
+
+            def event():
+                P = K.copy()
+                for i in K.nodes:
+                    opchange = [P.nodes[i]['relevance'] * influence_matrix[i, i]]
+                    for j in K.neighbors(i):
+                        if P.nodes[j]['relevance'] >= P.nodes[j]['threshold']:
+                            if random.random() < probability_matrix[i, j]:
+                                opchange.append(influence_matrix[i, j] * P.nodes[j]['relevance'])
+                            else:
+                                opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
+                        elif P.nodes[j]['relevance'] < P.nodes[j]['threshold']:
+                            opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
+                    K.nodes[i]["relevance"] = np.sum(opchange)
+                    if K.nodes[i]["relevance"] > 1:
+                        K.nodes[i]["relevance"] = 1
+
+                return K
+            cristo = [(primini / num)]
+            while t != steps:
+                datelli = []
+                datini = []
+                t += 1
+                event()
+                for n in K.nodes:
+                    datelli.append(K.nodes[n]['relevance'])
+                    if K.nodes[n]['relevance'] > K.nodes[n]['threshold']:
+                        datini.append(n)
+                pd.DataFrame({'x': datelli})
+                datoni.append(datelli)
+                cristo.append(len(datini) / num)
+
+            plt.plot(datoni, 'k', alpha=0.1)
+            plt.plot(cristo, 'green', alpha=1)
+            plt.plot(np.mean(datoni, axis=1), 'r--', label='mean')
+            plt.plot(np.median(datoni, axis=1), 'b', label='median')
+            plt.legend()
+            bott.send_plot(plt)
+            plt.cla()
+
+        def degroot(G):
+            K = G.copy()
+            t = 0
+
+            def event():
+                P = K.copy()
+                for i in K.nodes:
+                    opchange = [P.nodes[i]['relevance'] * influence_matrix[i, i]]
+                    for j in K.neighbors(i):
+                        if random.random() < probability_matrix[i, j]:
+                                opchange.append(P.nodes[j]['relevance'] * influence_matrix[i, j])
+                        else:
+                            opchange.append(P.nodes[i]['relevance'] * influence_matrix[i, j])
+                    K.nodes[i]["relevance"] = np.sum(opchange)
+                return K
+
+            while t != steps:
+                datelli = []
+                t += 1
+                event()
+                for n in K.nodes:
+                    datelli.append(K.nodes[n]['relevance'])
+                pd.DataFrame({'x': datelli})
+                datoni.append(datelli)
+            plt.plot(datoni, 'k', alpha=0.1)
+            mean = []
+            plt.plot(np.mean(datoni, axis=1), 'r--', label='mean')
+            plt.plot(np.median(datoni, axis=1), 'b', label='median')
+            plt.legend()
+            bott.send_plot(plt)
+            plt.cla()
+
+
+
+
+        degroot(G)
+        datoni = []
+        degrootmodified(G)
+        datoni = []
+        degrootmodifiedstoc(G)
+        msgreplaydynamics = bot.send_message(message.chat.id,'Do you want to repeat the analysis with the same '
+                                                             'parameters?  \n/Yes\nNo, /Go_back_to_menu')
+        bot.register_next_step_handler(msgreplaydynamics,carryitondynamics)
 
 
 
 
 
-print('Bot started...')
-while True:
-    bot.polling()
+bot.polling()
 
