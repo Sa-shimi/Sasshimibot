@@ -2486,9 +2486,11 @@ def carryitondynamics(message):
         primini = data[7]
         p = par
 
+
+        p = par
         F = nx.random_tree(n=num, create_using=nx.DiGraph, )
         G = nx.barabasi_albert_graph(num, p)
-        nx.set_edge_attributes(G, 0, name='threshold')
+        nx.set_node_attributes(G, 0, name='threshold')
         for n in G.nodes:
             G.nodes[n]['threshold'] = thr
         datoni = []
@@ -2611,9 +2613,6 @@ def carryitondynamics(message):
         H1.rename(columns={0: 'BCentrality1'}, inplace=True)
         H1['Hier1'] = (H1['BC1Max'] - H1['BCentrality1'])
         Vl = V / V1
-        nx.set_edge_attributes(G, 0, name='imitation')
-        for n in G.nodes:
-            G.nodes[n]['imitation'] = randrange(1, 10) / 100
 
         sup = []
         for (i, j) in F.edges:
@@ -2621,12 +2620,7 @@ def carryitondynamics(message):
 
         sub = F.edges
 
-        nx.set_edge_attributes(G, 0, name='theta')
-        for n in G.nodes:
-            G.nodes[n]['theta'] = randrange(1, 10) / 500
-        nx.set_edge_attributes(G, 0, name='ego')
-        for n in G.nodes:
-            G.nodes[n]['ego'] = randrange(4, 9) / 10
+        nx.set_edge_attributes(G, 0, name='weight')
         nx.set_node_attributes(G, 0, name='relevance')
         for n in G.nodes:
             G.nodes[n]['relevance'] = np.random.beta(data[3], data[4])
@@ -2636,11 +2630,10 @@ def carryitondynamics(message):
         for n in primi:
             G.nodes[n]['relevance'] = 1
         for n in stubborn:
-            G.nodes[n]['relevance'] = randrange(0,100)/100
+            G.nodes[n]['relevance'] = randrange(0, 100) / 100
 
         banana = random.sample(range(0, num), stub)
         print(banana)
-
         influence_matrix = np.matrix(np.zeros((num, num)))
         for i in G.nodes:
             for j in G.neighbors(i):
@@ -2654,8 +2647,6 @@ def carryitondynamics(message):
                     elif BC[i] - BC[j] == 0:
                         influence_matrix[i, j] = np.random.beta(4, 3) / len(list(G.neighbors(i)))
             influence_matrix[i, i] = (1 - influence_matrix[[i]].sum(axis=1))
-
-
 
         probability_matrix = np.matrix(np.zeros((num, num)))
         for i in G.nodes:
@@ -2678,70 +2669,38 @@ def carryitondynamics(message):
                         elif BC[i] - BC[j] == 0:
                             probability_matrix[i, j] = np.random.beta(8, 4)
 
-        bellini = []
-        def degrootmodified(G):
+        def degroottilde(G):
             K = G.copy()
             t = 0
 
             def event():
                 P = K.copy()
-                for i in K.nodes:
-                    opchange = [P.nodes[i]['relevance'] * influence_matrix[i, i]]
-                    for j in K.neighbors(i):
-                        if P.nodes[j]['relevance'] >= P.nodes[j]['threshold']:
-                                opchange.append(influence_matrix[i, j] * P.nodes[j]['relevance'])
-                        elif P.nodes[j]['relevance'] < P.nodes[j]['threshold']:
-                            opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
-                    K.nodes[i]["relevance"] = np.sum(opchange)
-                    if K.nodes[i]["relevance"] > 1:
-                        K.nodes[i]["relevance"] = 1
-
-                return K
-            cristo = [(primini/num)]
-            while t != steps:
-                datelli = []
-                datini = []
-                t += 1
-                event()
-                for n in K.nodes:
-                    datelli.append(K.nodes[n]['relevance'])
-                    if K.nodes[n]['relevance'] > K.nodes[n]['threshold']:
-                        datini.append(n)
-                pd.DataFrame({'x': datelli})
-                datoni.append(datelli)
-                cristo.append(len(datini)/num)
-
-            plt.plot(datoni, 'k', alpha=0.1)
-            plt.plot(cristo, 'green',alpha=1)
-            plt.plot(np.mean(datoni,axis=1), 'r--', label='mean')
-            plt.plot(np.median(datoni,axis=1),'b', label='median')
-            plt.legend()
-            bott.send_plot(plt)
-            plt.cla()
-
-
-
-        def degrootmodifiedstoc(G):
-            K = G.copy()
-            t = 0
-
-            def event():
-                P = K.copy()
-                for i in K.nodes:
-                    opchange = [P.nodes[i]['relevance'] * influence_matrix[i, i]]
-                    for j in K.neighbors(i):
-                        if P.nodes[j]['relevance'] >= P.nodes[j]['threshold']:
-                            if random.random() < probability_matrix[i, j]:
-                                opchange.append(influence_matrix[i, j] * P.nodes[j]['relevance'])
+                influence_matrix_real = np.matrix(np.zeros((num, num)))
+                influence_matrix_tilde = np.matrix(np.zeros((num, num)))
+                for i in range(num):
+                    for j in range(num):
+                        if i == j:
+                            influence_matrix_real[i, i] = influence_matrix[i, i]
+                        elif random.random() < probability_matrix[i, j]:
+                            if P.nodes[j]['relevance'] > P.nodes[j]['threshold']:
+                                influence_matrix_real[i, j] = influence_matrix[i, j]
                             else:
-                                opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
-                        elif P.nodes[j]['relevance'] < P.nodes[j]['threshold']:
-                            opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
+                                influence_matrix_real[i, j] = 0
+                for i in range(num):
+                    for j in range(num):
+                        influence_matrix_tilde[i, j] = influence_matrix_real[i, j] / np.sum(influence_matrix_real[i])
+
+                for i in K.nodes:
+                    opchange = [P.nodes[i]['relevance'] * influence_matrix_tilde[i, i]]
+                    for j in K.neighbors(i):
+                        opchange.append(influence_matrix_tilde[i, j] * P.nodes[j]['relevance'])
+
                     K.nodes[i]["relevance"] = np.sum(opchange)
                     if K.nodes[i]["relevance"] > 1:
                         K.nodes[i]["relevance"] = 1
 
                 return K
+
             cristo = [(primini / num)]
             while t != steps:
                 datelli = []
@@ -2757,12 +2716,114 @@ def carryitondynamics(message):
                 cristo.append(len(datini) / num)
 
             plt.plot(datoni, 'k', alpha=0.1)
-            plt.plot(cristo, 'green', alpha=1)
+            plt.plot(cristo, 'green', alpha=1, label='adoption rate')
             plt.plot(np.mean(datoni, axis=1), 'r--', label='mean')
             plt.plot(np.median(datoni, axis=1), 'b', label='median')
+            plt.axhline(y=thr, color='purple', label='threshold (avg)')
             plt.legend()
+            plt.grid()
             bott.send_plot(plt)
             plt.cla()
+
+
+
+        def degrootmodified(G):
+            K = G.copy()
+            t = 0
+
+            def event():
+                P = K.copy()
+                for i in K.nodes:
+                    opchange = [P.nodes[i]['relevance'] * influence_matrix[i, i]]
+                    for j in K.neighbors(i):
+                        if P.nodes[j]['relevance'] >= P.nodes[j]['threshold']:
+                            opchange.append(influence_matrix[i, j] * P.nodes[j]['relevance'])
+                        elif P.nodes[j]['relevance'] < P.nodes[j]['threshold']:
+                            opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
+                    K.nodes[i]["relevance"] = np.sum(opchange)
+                    if K.nodes[i]["relevance"] > 1:
+                        K.nodes[i]["relevance"] = 1
+
+                return K
+
+            cristo = [(primini / num)]
+            while t != steps:
+                datelli = []
+                datini = []
+                t += 1
+                event()
+                for n in K.nodes:
+                    datelli.append(K.nodes[n]['relevance'])
+                    if K.nodes[n]['relevance'] > K.nodes[n]['threshold']:
+                        datini.append(n)
+                pd.DataFrame({'x': datelli})
+                datoni.append(datelli)
+                cristo.append(len(datini) / num)
+
+            plt.plot(datoni, 'k', alpha=0.1)
+            plt.plot(cristo, 'green', alpha=1, label='adoption rate')
+            plt.plot(np.mean(datoni, axis=1), 'r--', label='mean')
+            plt.plot(np.median(datoni, axis=1), 'b', label='median')
+            plt.axhline(y=thr, color='purple', label='threshold (avg)')
+            plt.legend()
+            plt.grid()
+            bott.send_plot(plt)
+            plt.cla()
+
+        def degrootmodifiedstoc(G):
+            K = G.copy()
+            t = 0
+
+            def event():
+                P = K.copy()
+                for i in K.nodes:
+                    opchange = [P.nodes[i]['relevance'] * influence_matrix[i, i]]
+                    for j in K.neighbors(i):
+                        if P.nodes[j]['relevance'] >= P.nodes[j]['threshold']:
+                            if random.random() < probability_matrix[i, j]:
+                                opchange.append(influence_matrix[i, j] * P.nodes[j]['relevance'])
+                                if (influence_matrix[i, j] * P.nodes[j]['relevance']) - P.nodes[i]['relevance'] > 0:
+                                    G.edges[i, j]['weight'] = G.edges[i, j]['weight'] + abs(
+                                        (influence_matrix[i, j] * P.nodes[j]['relevance']) - P.nodes[i][
+                                            'relevance'])
+                            else:
+                                opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
+                        elif P.nodes[j]['relevance'] < P.nodes[j]['threshold']:
+                            opchange.append(influence_matrix[i, j] * P.nodes[i]['relevance'])
+                    K.nodes[i]["relevance"] = np.sum(opchange)
+                    if K.nodes[i]["relevance"] > 1:
+                        K.nodes[i]["relevance"] = 1
+
+                return K
+
+            cristo = [(primini / num)]
+            while t != steps:
+                datelli = []
+                datini = []
+                t += 1
+                event()
+                for n in K.nodes:
+                    datelli.append(K.nodes[n]['relevance'])
+                    if K.nodes[n]['relevance'] > K.nodes[n]['threshold']:
+                        datini.append(n)
+                pd.DataFrame({'x': datelli})
+                datoni.append(datelli)
+                cristo.append(len(datini) / num)
+
+            plt.plot(datoni, 'k', alpha=0.1)
+            plt.plot(cristo, 'green', alpha=1, label='adoption rate')
+            plt.plot(np.mean(datoni, axis=1), 'r--', label='mean')
+            plt.plot(np.median(datoni, axis=1), 'b', label='median')
+            plt.axhline(y=thr, color='purple', label='threshold (avg)')
+            plt.legend()
+            plt.grid()
+            bott.send_plot(plt)
+            plt.cla()
+
+
+
+
+
 
         def degroot(G):
             K = G.copy()
@@ -2774,7 +2835,7 @@ def carryitondynamics(message):
                     opchange = [P.nodes[i]['relevance'] * influence_matrix[i, i]]
                     for j in K.neighbors(i):
                         if random.random() < probability_matrix[i, j]:
-                                opchange.append(P.nodes[j]['relevance'] * influence_matrix[i, j])
+                            opchange.append(P.nodes[j]['relevance'] * influence_matrix[i, j])
                         else:
                             opchange.append(P.nodes[i]['relevance'] * influence_matrix[i, j])
                     K.nodes[i]["relevance"] = np.sum(opchange)
@@ -2789,21 +2850,23 @@ def carryitondynamics(message):
                 pd.DataFrame({'x': datelli})
                 datoni.append(datelli)
             plt.plot(datoni, 'k', alpha=0.1)
-            mean = []
             plt.plot(np.mean(datoni, axis=1), 'r--', label='mean')
             plt.plot(np.median(datoni, axis=1), 'b', label='median')
+            plt.axhline(y=thr, color='purple', label='threshold (avg)')
             plt.legend()
+            plt.grid()
             bott.send_plot(plt)
             plt.cla()
 
-
-
-
-        degroot(G)
-        datoni = []
-        degrootmodified(G)
+        #degroot(G)
+        #datoni = []
+        #degrootmodified(G)
         datoni = []
         degrootmodifiedstoc(G)
+        datoni = []
+        degroottilde(G)
+
+
         msgreplaydynamics = bot.send_message(message.chat.id,'Do you want to repeat the analysis with the same '
                                                              'parameters?  \n/Yes\nNo, /Go_back_to_menu')
         bot.register_next_step_handler(msgreplaydynamics,carryitondynamics)
